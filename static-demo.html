@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" class="demo">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Demo</title>
+
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/domain-picker.css">
+
+    <style>
+        .demo body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .demo #domainPicker {
+            display: block !important;
+            margin: 40px auto;
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="domainPicker" class="picker-box domain-picker hide">
+        <div class="domain-picker-item">
+            <div class="flex flex-row justify-between">
+                <div class="domain-picker-title">所有领域</div>
+                <div>
+                    <label for="domainAll" class="domain-checkBox checkBox-inner">
+                        <input id="domainAll" type="checkbox" name="domainAll" value="domainAll">
+                        <span class="checkBox is-indeterminate"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="domain-picker-item-children">
+                <div class="domain-picker-item">
+                    <div class="flex flex-row justify-between">
+                        <div class="flex flex-row">
+                            <div class="domain-picker-append"></div>
+                            <div class="domain-picker-title">计算机视觉</div>
+                        </div>
+                        <div>
+                            <label for="domain2" class="domain-checkBox checkBox-inner">
+                                <input id="domain2" type="checkbox" name="domain2" value="domain2">
+                                <span class="checkBox"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="domain-picker-item">
+                    <div class="flex flex-row justify-between">
+                        <div class="flex flex-row">
+                            <div class="domain-picker-append">+</div>
+                            <div class="domain-picker-title">机器学习</div>
+                        </div>
+                        <div>
+                            <label for="domain3" class="domain-checkBox checkBox-inner">
+                                <input id="domain3" type="checkbox" name="domain3" value="domain3">
+                                <span class="checkBox"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="domain-picker-item-children hide">
+                        <div class="domain-picker-item">
+                            <div class="flex flex-row justify-between">
+                                <div class="flex flex-row">
+                                    <div class="domain-picker-append2"></div>
+                                    <div class="domain-picker-title">AAAI</div>
+                                </div>
+                                <div>
+                                    <label for="domain4" class="domain-checkBox checkBox-inner">
+                                        <input id="domain4" type="checkbox" name="domain4" value="domain4">
+                                        <span class="checkBox"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="domain-picker-item">
+                            <div class="flex flex-row justify-between">
+                                <div class="flex flex-row">
+                                    <div class="domain-picker-append2"></div>
+                                    <div class="domain-picker-title">ALC</div>
+                                </div>
+                                <div>
+                                    <label for="domain5" class="domain-checkBox checkBox-inner">
+                                        <input id="domain5" type="checkbox" name="domain5" value="domain5">
+                                        <span class="checkBox"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="domain-picker-item">
+                    <div class="flex flex-row justify-between">
+                        <div class="flex flex-row">
+                            <div class="domain-picker-append"></div>
+                            <div class="domain-picker-title">自然语言处理</div>
+                        </div>
+                        <div>
+                            <label for="domain6" class="domain-checkBox checkBox-inner">
+                                <input id="domain6" checked="checked" type="checkbox" name="domain6" value="domain6">
+                                <span class="checkBox"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="domain-picker-item">
+                    <div class="flex flex-row justify-between">
+                        <div class="flex flex-row">
+                            <div class="domain-picker-append"></div>
+                            <div class="domain-picker-title">web信息检索</div>
+                        </div>
+                        <div>
+                            <label for="domain7" class="domain-checkBox checkBox-inner">
+                                <input id="domain7" type="checkbox" name="domain6" value="domain6">
+                                <span class="checkBox"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
