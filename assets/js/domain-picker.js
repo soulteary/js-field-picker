@@ -3,20 +3,23 @@ window.DomainPicker = (function () {
     Selected: null,
     Domain: null,
     ComponentId: "",
-    domainTagsDom: [],
     Show: showPicker,
     Hide: hidePicker,
+    onChange: null,
   };
 
   function getRootDomain(datasets) {
     const [rootInfo] = datasets;
     const { cname, code } = rootInfo;
+    const allChildrenChecked = datasets.every(dataset => dataset.checked);
+    const state = allChildrenChecked ? "checked" : "";
+
     return `
       <div class="flex flex-row justify-between">
         <div class="domain-picker-title">${cname}</div>
         <div>
           <label for="domain-${code}" class="domain-checkBox checkBox-inner">
-            <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}">
+            <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
             <span class="checkBox"></span>
           </label>
         </div>
@@ -40,6 +43,9 @@ window.DomainPicker = (function () {
     `;
 
     if (children && children.length) {
+      const allChildrenChecked = children.every(child => child.checked);
+      const indeterminateState = !allChildrenChecked && children.some(child => child.checked);
+
       content = `
         <div class="flex flex-row justify-between">
           <div class="flex flex-row">
@@ -49,7 +55,7 @@ window.DomainPicker = (function () {
           <div>
             <label for="domain-${code}" class="domain-checkBox checkBox-inner">
               <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
-              <span class="checkBox"></span>
+              <span class="checkBox ${indeterminateState ? "is-indeterminate" : ""}"></span>
             </label>
           </div>
         </div>
@@ -78,9 +84,6 @@ window.DomainPicker = (function () {
 
   function initBaseContainer(container, componentId) {
     const template = `
-      <div id="domainTags" class="topbar-text">
-        <span></span>
-      </div>
       <div id="${componentId}" class="picker-box domain-picker">
         <div class="domain-picker-item">
           ${getRootDomain(DomainOptions.data)}
@@ -98,7 +101,6 @@ window.DomainPicker = (function () {
 
     bindAppendEvents(container);
     bindCheckboxEvents(container);
-    initializeDomainTags();
   }
 
   /**
@@ -122,7 +124,6 @@ window.DomainPicker = (function () {
 
     updatePickerMaxHeight(container);
   }
-
   /**
    * checkbox bind event
    */
@@ -137,11 +138,6 @@ window.DomainPicker = (function () {
       checkBoxes.forEach(checkBox => {
         checkBox.classList.remove("is-indeterminate");
       });
-
-      if (!this.checked) {
-        DomainPicker.domainTagsDom = [];
-        updateDomainTagsContainer();
-      }
     });
 
     const domainCheckBoxes = document.querySelectorAll(`${container} .domain-checkBox input[type=checkbox]`);
@@ -150,25 +146,6 @@ window.DomainPicker = (function () {
       updateParentCheckboxState(checkbox);
     });
   }
-
-  /**
-   * initialize the domainTags
-   */
-  function initializeDomainTags() {
-    const checkboxes = document.querySelectorAll(`#${DomainPicker.ComponentId} input[type=checkbox]`);
-    checkboxes.forEach(checkbox => {
-      const currentPicker = checkbox.closest(".domain-picker-item");
-      const parentPicker = currentPicker.parentNode.previousElementSibling;
-      const currentTitleElement = currentPicker.querySelector(".domain-picker-title");
-      const parentTitleElement = parentPicker.querySelector(".domain-picker-title");
-      const currentText = currentTitleElement ? currentTitleElement.textContent : "";
-      const parentText = parentTitleElement ? parentTitleElement.textContent : "";
-      const isChecked = checkbox.checked;
-
-      updateDomainTags(currentText, parentText, isChecked);
-    });
-  }
-
   /**
    * Update the max-height of the domain picker based on the expanded content
    * @param {*} container
@@ -181,7 +158,6 @@ window.DomainPicker = (function () {
     const pickerMaxHeight = expandedContentHeight + pickerPadding;
     picker.style.maxHeight = pickerMaxHeight + "px";
   }
-
   /**
    * Update the parent checkboxes based on the initial selection of children
    * @param {*} checkbox
@@ -191,29 +167,28 @@ window.DomainPicker = (function () {
     const parentCheckboxWrapper = parentItem.parentNode.parentNode.querySelector(".checkBox");
     const siblings = parentItem.parentNode.querySelectorAll(".domain-picker-item");
     const checkedSiblings = parentItem.parentNode.querySelectorAll(".domain-picker-item input[type=checkbox]:checked");
-    console.log(parentItem)
-    console.log(siblings.length)
-    console.log(checkedSiblings.length)
-  
-    if (siblings.length > 1 && checkedSiblings.length === siblings.length) {
-      parentCheckboxWrapper.classList.remove("is-indeterminate");
-      parentCheckboxWrapper.classList.add("checked");
-    } else if (checkedSiblings.length === 0) {
-      parentCheckboxWrapper.classList.remove("is-indeterminate");
-      parentCheckboxWrapper.classList.remove("checked");
-    } else {
-      parentCheckboxWrapper.classList.remove("checked");
-      parentCheckboxWrapper.classList.add("is-indeterminate");
+
+    if (siblings.length > 1) {
+      if (checkedSiblings.length === siblings.length) {
+        parentCheckboxWrapper.classList.remove("is-indeterminate");
+        parentCheckboxWrapper.classList.add("checked");
+      } else if (checkedSiblings.length > 0) {
+        parentCheckboxWrapper.classList.add("is-indeterminate");
+        parentCheckboxWrapper.classList.remove("checked");
+      } else {
+        parentCheckboxWrapper.classList.remove("is-indeterminate");
+        parentCheckboxWrapper.classList.remove("checked");
+      }
     }
-  
+
     const parentPicker = parentItem.parentNode.parentNode.closest(".domain-picker-item");
     if (parentPicker) {
       const parentCheckbox = parentPicker.querySelector("input[type=checkbox]");
       updateParentCheckboxState(parentCheckbox);
     }
-  }
-  
 
+    updateParentState(checkbox);
+  }
   /**
    * Function to handle checkbox events
    * @param {*} event
@@ -222,16 +197,26 @@ window.DomainPicker = (function () {
     const isChecked = event.target.checked;
     const currentPicker = event.target.closest(".domain-picker-item");
     const childrenPicker = currentPicker.querySelector(".domain-picker-item-children");
-    const parentPicker = currentPicker.parentNode.previousElementSibling;
-    const parentCheckbox = parentPicker.querySelector("input[type=checkbox]");
-    const currentTitleElement = currentPicker.querySelector(".domain-picker-title");
-    const parentTitleElement = parentPicker.querySelector(".domain-picker-title");
-    const currentText = currentTitleElement ? currentTitleElement.textContent : "";
-    const parentText = parentTitleElement ? parentTitleElement.textContent : "";
 
     toggleChildrenCheckboxes(childrenPicker, isChecked);
-    updateParentCheckbox(parentCheckbox, currentPicker);
-    updateDomainTags(currentText, parentText, isChecked);
+
+    // Update DomainPicker.Selected
+    const domainId = event.target.value;
+    if (isChecked) {
+      DomainPicker.Selected.push(domainId);
+    } else {
+      const index = DomainPicker.Selected.indexOf(domainId);
+      if (index !== -1) {
+        DomainPicker.Selected.splice(index, 1);
+      }
+    }
+
+    updateParentCheckboxState(event.target);
+
+    // Call the onChange callback
+    if (DomainPicker.onChange && typeof DomainPicker.onChange === "function") {
+      DomainPicker.onChange(DomainPicker.Selected);
+    }
   }
 
   /**
@@ -244,6 +229,17 @@ window.DomainPicker = (function () {
       const childCheckboxes = childrenPicker.querySelectorAll("input[type=checkbox]");
       childCheckboxes.forEach(childCheckbox => {
         childCheckbox.checked = isChecked;
+
+        // Update DomainPicker.Selected
+        const domainId = childCheckbox.value;
+        if (isChecked) {
+          DomainPicker.Selected.push(domainId);
+        } else {
+          const index = DomainPicker.Selected.indexOf(domainId);
+          if (index !== -1) {
+            DomainPicker.Selected.splice(index, 1);
+          }
+        }
       });
     }
   }
@@ -253,74 +249,26 @@ window.DomainPicker = (function () {
    * @param {*} parentCheckbox
    * @param {*} currentPicker
    */
-  function updateParentCheckbox(parentCheckbox, currentPicker) {
-    if (!parentCheckbox) return;
-    const siblings = currentPicker.parentNode.querySelectorAll(".domain-picker-item");
-    const checkedSiblings = currentPicker.parentNode.querySelectorAll(".domain-picker-item input[type=checkbox]:checked");
+  function updateParentState(checkbox) {
+    const parentItem = checkbox.closest(".domain-picker-item-children");
+    if (parentItem) {
+      const parentCheckbox = parentItem.previousElementSibling.querySelector("input[type=checkbox]");
+      const siblings = parentItem.querySelectorAll(".domain-picker-item");
+      const checkedSiblings = parentItem.querySelectorAll(".domain-picker-item input[type=checkbox]:checked");
 
-    if (checkedSiblings.length === siblings.length) {
-      parentCheckbox.checked = true;
-      parentCheckbox.nextElementSibling.classList.remove("is-indeterminate");
-    } else if (checkedSiblings.length === 0) {
-      parentCheckbox.checked = false;
-      parentCheckbox.nextElementSibling.classList.remove("is-indeterminate");
-    } else {
-      parentCheckbox.checked = false;
-      parentCheckbox.nextElementSibling.classList.add("is-indeterminate");
-    }
-  }
-
-  /**
-   * remove the domain tag
-   * @param {string} text
-   */
-  function removeDomainTag(text) {
-    const index = DomainPicker.domainTagsDom.indexOf(text);
-    if (index > -1) {
-      DomainPicker.domainTagsDom.splice(index, 1);
-    }
-
-    updateDomainTagsContainer();
-  }
-
-  /**
-   * update the domain tags
-   */
-  function updateDomainTagsContainer() {
-    const domainTagsContainer = document.querySelector("#domainTags");
-    domainTagsContainer.innerHTML = "";
-
-    DomainPicker.domainTagsDom.forEach(item => {
-      const spanElement = document.createElement("span");
-      spanElement.textContent = item;
-      domainTagsContainer.appendChild(spanElement);
-    });
-  }
-
-  /**
-   * Update the domain tags based on the current selection
-   * @param {*} currentText
-   * @param {*} parentText
-   * @param {*} isChecked
-   */
-  function updateDomainTags(currentText, parentText, isChecked) {
-    if (isChecked) {
-      if (parentText === DomainOptions.data[0].cname) {
-        DomainPicker.domainTagsDom = [currentText];
-      } else if (parentText) {
-        const domainTag = `${parentText}-${currentText}`;
-        if (!DomainPicker.domainTagsDom.includes(domainTag)) {
-          DomainPicker.domainTagsDom.push(domainTag);
-        }
+      if (checkedSiblings.length === siblings.length) {
+        parentCheckbox.checked = true;
+        parentCheckbox.classList.remove("is-indeterminate");
+      } else if (checkedSiblings.length > 0) {
+        parentCheckbox.checked = false;
+        parentCheckbox.classList.add("is-indeterminate");
       } else {
-        DomainPicker.domainTagsDom = [currentText];
+        parentCheckbox.checked = false;
+        parentCheckbox.classList.remove("is-indeterminate");
       }
-    } else {
-      removeDomainTag(currentText);
-      removeDomainTag(`${parentText}-${currentText}`);
-    }
 
-    updateDomainTagsContainer();
+      updateParentState(parentCheckbox);
+    }
   }
 
   /**
@@ -341,8 +289,13 @@ window.DomainPicker = (function () {
     const componentId = "domain-picker-" + Math.random().toString(36).slice(-6);
     DomainPicker.ComponentId = componentId;
     DomainPicker.Domain = datasets;
-    DomainPicker.domainTagsDom = [];
+    DomainPicker.Selected = [];
     initBaseContainer(container, componentId);
+
+    const checkboxes = document.querySelectorAll(`${container} input[type=checkbox]:checked`);
+    checkboxes.forEach(checkbox => {
+      DomainPicker.Selected.push(checkbox.value);
+    });
 
     return DomainPicker;
   }
