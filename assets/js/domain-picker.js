@@ -27,40 +27,26 @@ window.DomainPicker = (function () {
   function getSingleDomain(dataset) {
     const { name, cname, code, checked, link, children } = dataset;
     const state = checked ? "checked" : "";
-    let content = `
-      <div class="flex flex-row justify-between">
-        <div class="domain-picker-title">${cname}</div>
-        <div>
-          <label for="domain-${code}" class="domain-checkBox checkBox-inner">
-            <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
-            <span class="checkBox"></span>
-          </label>
-        </div>
-      </div>
-    `;
 
-    if (children && children.length) {
-      content = `
-        <div class="flex flex-row justify-between">
-          <div class="flex flex-row">
-            <div class="domain-picker-append">-</div>
-            <div class="domain-picker-title">${cname}</div>
-          </div>
-          <div>
-            <label for="domain-${code}" class="domain-checkBox checkBox-inner">
-              <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
-              <span class="checkBox"></span>
-            </label>
-          </div>
-        </div>
-        ${getSingleDomainChildren(children)}
-      `;
-    }
+    const hasChildren = children && children.length;
+    const expend = `<div class="domain-picker-append">-</div>`;
 
     return `
-      <div class="domain-picker-item">
-        ${content}
-      </div>
+<div class="domain-picker-item">
+  <div class="flex flex-row justify-between">
+    <div class="flex flex-row">
+      ${hasChildren ? expend : ""}
+      <div class="domain-picker-title">${cname}</div>
+    </div>
+    <div>
+      <label for="domain-${code}" class="domain-checkBox checkBox-inner">
+        <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
+        <span class="checkBox"></span>
+      </label>
+    </div>
+  </div>
+  ${getSingleDomainChildren(children)}
+</div>
     `;
   }
 
