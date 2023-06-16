@@ -27,26 +27,40 @@ window.DomainPicker = (function () {
   function getSingleDomain(dataset) {
     const { name, cname, code, checked, link, children } = dataset;
     const state = checked ? "checked" : "";
+    let content = `
+      <div class="flex flex-row justify-between">
+        <div class="domain-picker-title">${cname}</div>
+        <div>
+          <label for="domain-${code}" class="domain-checkBox checkBox-inner">
+            <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
+            <span class="checkBox"></span>
+          </label>
+        </div>
+      </div>
+    `;
 
-    const hasChildren = children && children.length;
-    const expend = `<div class="domain-picker-append">-</div>`;
+    if (children && children.length) {
+      content = `
+        <div class="flex flex-row justify-between">
+          <div class="flex flex-row">
+            <div class="domain-picker-append">-</div>
+            <div class="domain-picker-title">${cname}</div>
+          </div>
+          <div>
+            <label for="domain-${code}" class="domain-checkBox checkBox-inner">
+              <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
+              <span class="checkBox"></span>
+            </label>
+          </div>
+        </div>
+        ${getSingleDomainChildren(children)}
+      `;
+    }
 
     return `
-<div class="domain-picker-item">
-  <div class="flex flex-row justify-between">
-    <div class="flex flex-row">
-      ${hasChildren ? expend : ""}
-      <div class="domain-picker-title">${cname}</div>
-    </div>
-    <div>
-      <label for="domain-${code}" class="domain-checkBox checkBox-inner">
-        <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
-        <span class="checkBox"></span>
-      </label>
-    </div>
-  </div>
-  ${getSingleDomainChildren(children)}
-</div>
+      <div class="domain-picker-item">
+        ${content}
+      </div>
     `;
   }
 
@@ -141,7 +155,7 @@ window.DomainPicker = (function () {
    * initialize the domainTags
    */
   function initializeDomainTags() {
-    const checkboxes = document.querySelectorAll(`#${DomainPicker.ComponentId} input[type=checkbox]:checked`);
+    const checkboxes = document.querySelectorAll(`#${DomainPicker.ComponentId} input[type=checkbox]`);
     checkboxes.forEach(checkbox => {
       const currentPicker = checkbox.closest(".domain-picker-item");
       const parentPicker = currentPicker.parentNode.previousElementSibling;
@@ -149,8 +163,9 @@ window.DomainPicker = (function () {
       const parentTitleElement = parentPicker.querySelector(".domain-picker-title");
       const currentText = currentTitleElement ? currentTitleElement.textContent : "";
       const parentText = parentTitleElement ? parentTitleElement.textContent : "";
+      const isChecked = checkbox.checked;
 
-      updateDomainTags(currentText, parentText, true);
+      updateDomainTags(currentText, parentText, isChecked);
     });
   }
 
@@ -162,7 +177,7 @@ window.DomainPicker = (function () {
     const picker = document.querySelector(`${container} .domain-picker`);
     const expandedContent = picker.querySelector(".domain-picker-item-children");
     const expandedContentHeight = expandedContent.offsetHeight;
-    const pickerPadding = 24; // Adjust this value according to your padding
+    const pickerPadding = 24;
     const pickerMaxHeight = expandedContentHeight + pickerPadding;
     picker.style.maxHeight = pickerMaxHeight + "px";
   }
@@ -176,20 +191,28 @@ window.DomainPicker = (function () {
     const parentCheckboxWrapper = parentItem.parentNode.parentNode.querySelector(".checkBox");
     const siblings = parentItem.parentNode.querySelectorAll(".domain-picker-item");
     const checkedSiblings = parentItem.parentNode.querySelectorAll(".domain-picker-item input[type=checkbox]:checked");
+    console.log(parentItem)
     console.log(siblings.length)
     console.log(checkedSiblings.length)
-
-    if (siblings.length > 0 && checkedSiblings.length === siblings.length) {
+  
+    if (siblings.length > 1 && checkedSiblings.length === siblings.length) {
       parentCheckboxWrapper.classList.remove("is-indeterminate");
       parentCheckboxWrapper.classList.add("checked");
-    } else if (siblings.length > 0 && checkedSiblings.length === 0) {
+    } else if (checkedSiblings.length === 0) {
       parentCheckboxWrapper.classList.remove("is-indeterminate");
       parentCheckboxWrapper.classList.remove("checked");
     } else {
       parentCheckboxWrapper.classList.remove("checked");
       parentCheckboxWrapper.classList.add("is-indeterminate");
     }
+  
+    const parentPicker = parentItem.parentNode.parentNode.closest(".domain-picker-item");
+    if (parentPicker) {
+      const parentCheckbox = parentPicker.querySelector("input[type=checkbox]");
+      updateParentCheckboxState(parentCheckbox);
+    }
   }
+  
 
   /**
    * Function to handle checkbox events
