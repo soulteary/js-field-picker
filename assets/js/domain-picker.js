@@ -19,7 +19,7 @@ window.DomainPicker = (function () {
         <div class="domain-picker-title">${cname}</div>
         <div>
           <label for="domain-${code}" class="domain-checkBox checkBox-inner">
-            <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
+            <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${cname}" ${state}>
             <span class="checkBox"></span>
           </label>
         </div>
@@ -35,7 +35,7 @@ window.DomainPicker = (function () {
         <div class="domain-picker-title">${cname}</div>
         <div>
           <label for="domain-${code}" class="domain-checkBox checkBox-inner">
-            <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
+            <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${cname}" ${state}>
             <span class="checkBox"></span>
           </label>
         </div>
@@ -54,7 +54,7 @@ window.DomainPicker = (function () {
           </div>
           <div>
             <label for="domain-${code}" class="domain-checkBox checkBox-inner">
-              <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
+              <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${cname}" ${state}>
               <span class="checkBox ${indeterminateState ? "is-indeterminate" : ""}"></span>
             </label>
           </div>
@@ -198,6 +198,7 @@ window.DomainPicker = (function () {
    * @param {*} event
    */
   function handleCheckboxClick(event) {
+    console.log(event)
     const isChecked = event.target.checked;
     const currentPicker = event.target.closest(".domain-picker-item");
     const childrenPicker = currentPicker.querySelector(".domain-picker-item-children");
@@ -205,11 +206,11 @@ window.DomainPicker = (function () {
     toggleChildrenCheckboxes(childrenPicker, isChecked);
 
     // Update DomainPicker.Selected
-    const domainId = event.target.value;
+    const domainName = event.target.value;
     if (isChecked) {
-      DomainPicker.Selected.push(domainId);
+      DomainPicker.Selected.push(domainName);
     } else {
-      const index = DomainPicker.Selected.indexOf(domainId);
+      const index = DomainPicker.Selected.indexOf(domainName);
       if (index !== -1) {
         DomainPicker.Selected.splice(index, 1);
       }
@@ -235,11 +236,11 @@ window.DomainPicker = (function () {
         childCheckbox.checked = isChecked;
 
         // Update DomainPicker.Selected
-        const domainId = childCheckbox.value;
+        const domainName = childCheckbox.value;
         if (isChecked) {
-          DomainPicker.Selected.push(domainId);
+          DomainPicker.Selected.push(domainName);
         } else {
-          const index = DomainPicker.Selected.indexOf(domainId);
+          const index = DomainPicker.Selected.indexOf(domainName);
           if (index !== -1) {
             DomainPicker.Selected.splice(index, 1);
           }
