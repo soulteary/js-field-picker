@@ -27,11 +27,23 @@ window.DomainPicker = (function () {
   function getSingleDomain(dataset) {
     const { name, cname, code, checked, link, children } = dataset;
     const state = checked ? "checked" : "";
-    return `
-      <div class="domain-picker-item">
+    let content = `
+      <div class="flex flex-row justify-between">
+        <div class="domain-picker-title">${cname}</div>
+        <div>
+          <label for="domain-${code}" class="domain-checkBox checkBox-inner">
+            <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
+            <span class="checkBox"></span>
+          </label>
+        </div>
+      </div>
+    `;
+
+    if (children && children.length) {
+      content = `
         <div class="flex flex-row justify-between">
           <div class="flex flex-row">
-            <div class="domain-picker-append">${children && children.length ? "-" : "+"}</div>
+            <div class="domain-picker-append">-</div>
             <div class="domain-picker-title">${cname}</div>
           </div>
           <div>
@@ -42,6 +54,12 @@ window.DomainPicker = (function () {
           </div>
         </div>
         ${getSingleDomainChildren(children)}
+      `;
+    }
+
+    return `
+      <div class="domain-picker-item">
+        ${content}
       </div>
     `;
   }
@@ -129,6 +147,7 @@ window.DomainPicker = (function () {
     const domainCheckBoxes = document.querySelectorAll(`${container} .domain-checkBox input[type=checkbox]`);
     domainCheckBoxes.forEach(checkbox => {
       checkbox.addEventListener("click", handleCheckboxClick);
+      updateParentCheckboxState(checkbox);
     });
   }
 
@@ -162,35 +181,28 @@ window.DomainPicker = (function () {
     picker.style.maxHeight = pickerMaxHeight + "px";
   }
 
-
   /**
    * Update the parent checkboxes based on the initial selection of children
-   * @param {*} container 
+   * @param {*} checkbox
    */
-  function updateParentCheckboxes(container) {
-    const parentItems = document.querySelectorAll(`${container} .domain-picker-item`);
-    parentItems.forEach(parentItem => {
-      const childCheckboxes = parentItem.querySelectorAll(".domain-picker-item-children input[type=checkbox]");
-      const parentCheckbox = parentItem.querySelector("input[type=checkbox]");
+  function updateParentCheckboxState(checkbox) {
+    const parentItem = checkbox.closest(".domain-picker-item");
+    const parentCheckboxWrapper = parentItem.parentNode.parentNode.querySelector(".checkBox");
+    const siblings = parentItem.parentNode.querySelectorAll(".domain-picker-item");
+    const checkedSiblings = parentItem.parentNode.querySelectorAll(".domain-picker-item input[type=checkbox]:checked");
+    console.log(siblings.length)
+    console.log(checkedSiblings.length)
 
-      if (childCheckboxes.length === 0) return;
-
-      const checkedChildCount = Array.from(childCheckboxes).filter(checkbox => checkbox.checked).length;
-      const isFullySelected = checkedChildCount === childCheckboxes.length;
-
-      parentCheckbox.checked = isFullySelected;
-      const parentCheckboxWrapper = parentCheckbox.parentNode.querySelector(".checkBox");
-      const siblings = parentCheckbox.closest(".domain-picker-item-children").querySelectorAll(".domain-picker-item");
-      const checkedSiblings = parentCheckbox.closest(".domain-picker-item-children").querySelectorAll(".domain-picker-item input[type=checkbox]:checked");
-
-      if (checkedSiblings.length === siblings.length) {
-        parentCheckboxWrapper.classList.remove("is-indeterminate");
-      } else if (checkedSiblings.length === 0) {
-        parentCheckboxWrapper.classList.remove("is-indeterminate");
-      } else {
-        parentCheckboxWrapper.classList.add("is-indeterminate");
-      }
-    });
+    if (siblings.length > 0 && checkedSiblings.length === siblings.length) {
+      parentCheckboxWrapper.classList.remove("is-indeterminate");
+      parentCheckboxWrapper.classList.add("checked");
+    } else if (siblings.length > 0 && checkedSiblings.length === 0) {
+      parentCheckboxWrapper.classList.remove("is-indeterminate");
+      parentCheckboxWrapper.classList.remove("checked");
+    } else {
+      parentCheckboxWrapper.classList.remove("checked");
+      parentCheckboxWrapper.classList.add("is-indeterminate");
+    }
   }
 
   /**
