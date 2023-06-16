@@ -342,11 +342,11 @@ input[type=checkbox] {
     -ms-transform: rotate(45deg) scaleY(0);
     -o-transform: rotate(45deg) scaleY(0);
     transform: rotate(45deg) scaleY(0);
-    -webkit-transition: transform 0.15s ease-in 0.05s;
-    -moz-transition: transform 0.15s ease-in 0.05s;
-    -ms-transition: transform 0.15s ease-in 0.05s;
-    -o-transition: transform 0.15s ease-in 0.05s;
-    transition: transform 0.15s ease-in 0.05s;
+    -webkit-transition: transform 0.1s ease-in 0.05s;
+    -moz-transition: transform 0.1s ease-in 0.05s;
+    -ms-transition: transform 0.1s ease-in 0.05s;
+    -o-transition: transform 0.1s ease-in 0.05s;
+    transition: transform 0.1s ease-in 0.05s;
 }
 
 .checkBox-inner .is-indeterminate {
