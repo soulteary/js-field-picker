@@ -124,6 +124,7 @@ window.DomainPicker = (function () {
 
     updatePickerMaxHeight(container);
   }
+
   /**
    * checkbox bind event
    */
@@ -146,6 +147,7 @@ window.DomainPicker = (function () {
       updateParentCheckboxState(checkbox);
     });
   }
+
   /**
    * Update the max-height of the domain picker based on the expanded content
    * @param {*} container
@@ -158,6 +160,7 @@ window.DomainPicker = (function () {
     const pickerMaxHeight = expandedContentHeight + pickerPadding;
     picker.style.maxHeight = pickerMaxHeight + "px";
   }
+
   /**
    * Update the parent checkboxes based on the initial selection of children
    * @param {*} checkbox
@@ -189,6 +192,7 @@ window.DomainPicker = (function () {
 
     updateParentState(checkbox);
   }
+
   /**
    * Function to handle checkbox events
    * @param {*} event
