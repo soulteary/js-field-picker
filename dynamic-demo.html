@@ -49,6 +49,10 @@
         <button id="hide-modal">Hide Modal</button>
     </div>
 
+    <div id="domainTags" class="topbar-text">
+        <span></span>
+    </div>
+
     <div id="container">
         <!-- container for region picker -->
     </div>
@@ -59,6 +63,26 @@
         document.getElementById('show-modal').addEventListener('click', instance.Show);
         document.getElementById('hide-modal').addEventListener('click', instance.Hide);
         document.getElementById('show-modal').click(); // switch modal to show instead of hide (default)
+
+        const domainTagsElement = document.getElementById("domainTags");
+
+        function refreshDomainTags(selected) {
+            console.log("selected", selected)
+            domainTagsElement.innerHTML = "";
+            selected.forEach(domain => {
+                let tag = document.createElement("span");
+                tag.textContent = domain;
+                domainTagsElement.appendChild(tag);
+            });
+        }
+
+        instance.onChange = function (selected) {
+            refreshDomainTags(selected);
+        };
+
+        refreshDomainTags(instance.Selected);
+
+
     </script>
 </body>
 
