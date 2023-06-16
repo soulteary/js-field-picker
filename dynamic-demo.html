@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" class="demo">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Demo</title>
+
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/domain-picker.css">
+    <script src="mock/domain-data.js"></script>
+
+    <style>
+        .demo body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .demo #container {
+            margin: 0 auto;
+            display: block;
+            position: relative;
+            width: 600px;
+            height: 600px;
+        }
+
+        .demo #container .picker-box {
+            position: relative;
+            margin: 40px auto;
+        }
+
+        .demo #demo-topbar {
+            width: 240px;
+            margin: 40px auto;
+        }
+
+        .demo #demo-topbar button {
+            width: 80px;
+            margin: 4px;
+            padding: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="demo-topbar">
+        <button id="show-modal">Show Modal</button>
+        <button id="hide-modal">Hide Modal</button>
+    </div>
+
+    <div id="container">
+        <!-- container for region picker -->
+    </div>
+
+    <script src="assets/js/domain-picker.js"></script>
+    <script>
+        let instance = DomainPicker("#container", window.DomainOptions.data);
+        document.getElementById('show-modal').addEventListener('click', instance.Show);
+        document.getElementById('hide-modal').addEventListener('click', instance.Hide);
+        document.getElementById('show-modal').click(); // switch modal to show instead of hide (default)
+    </script>
+</body>
+
+</html>
