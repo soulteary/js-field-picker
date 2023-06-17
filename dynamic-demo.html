@@ -61,7 +61,7 @@
 
     <script src="assets/js/domain-picker.js"></script>
     <script>
-        let instance = DomainPicker("#container", window.DomainOptions.data);
+        let instance = DomainPicker("#container", { data: window.DomainOptions.data });
         document.getElementById('show-modal').addEventListener('click', instance.Show);
         document.getElementById('hide-modal').addEventListener('click', instance.Hide);
         document.getElementById('show-modal').click(); // switch modal to show instead of hide (default)
