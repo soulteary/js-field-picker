@@ -16,7 +16,7 @@ window.DomainPicker = (function () {
   function getRootDomain(datasets) {
     const [rootInfo] = datasets;
     const { cname, code } = rootInfo;
-    const allChildrenChecked = datasets.every((dataset) => dataset.checked);
+    const allChildrenChecked = datasets.every(dataset => dataset.checked);
     const state = allChildrenChecked ? "checked" : "";
 
     return `
@@ -48,8 +48,8 @@ window.DomainPicker = (function () {
     `;
 
     if (children && children.length) {
-      const allChildrenChecked = children.every((child) => child.checked);
-      const indeterminateState = !allChildrenChecked && children.some((child) => child.checked);
+      const allChildrenChecked = children.every(child => child.checked);
+      const indeterminateState = !allChildrenChecked && children.some(child => child.checked);
 
       content = `
         <div class="flex flex-row justify-between">
@@ -82,7 +82,7 @@ window.DomainPicker = (function () {
 
     return `
       <div class="domain-picker-item-children">
-        ${dataset.map((item) => getSingleDomain(item)).join("")}
+        ${dataset.map(item => getSingleDomain(item)).join("")}
       </div>
     `;
   }
@@ -95,7 +95,7 @@ window.DomainPicker = (function () {
           <div class="domain-picker-item-children">
             ${DomainOptions.data
               .slice(1)
-              .map((dataset) => getSingleDomain(dataset))
+              .map(dataset => getSingleDomain(dataset))
               .join("")}
           </div>
         </div>
@@ -113,7 +113,7 @@ window.DomainPicker = (function () {
    */
   function bindAppendEvents(container) {
     const appendIcons = document.querySelectorAll(`${container} .domain-picker-append`);
-    appendIcons.forEach((icon) => {
+    appendIcons.forEach(icon => {
       icon.addEventListener("click", function () {
         const children = this.closest(".domain-picker-item").querySelector(".domain-picker-item-children");
         const isHidden = children.classList.contains("hide");
@@ -137,17 +137,17 @@ window.DomainPicker = (function () {
     const domainAll = document.querySelector("#domain-all");
     domainAll.addEventListener("click", function () {
       const checkboxes = document.querySelectorAll(`${container} input[type=checkbox]`);
-      checkboxes.forEach((checkbox) => {
+      checkboxes.forEach(checkbox => {
         checkbox.checked = this.checked;
       });
       const checkBoxes = document.querySelectorAll(`${container} .checkBox`);
-      checkBoxes.forEach((checkBox) => {
+      checkBoxes.forEach(checkBox => {
         checkBox.classList.remove("is-indeterminate");
       });
     });
 
     const domainCheckBoxes = document.querySelectorAll(`${container} .domain-checkBox input[type=checkbox]`);
-    domainCheckBoxes.forEach((checkbox) => {
+    domainCheckBoxes.forEach(checkbox => {
       checkbox.addEventListener("click", handleCheckboxClick);
       updateParentCheckboxState(checkbox);
     });
@@ -239,8 +239,9 @@ window.DomainPicker = (function () {
    */
   function toggleChildrenCheckboxes(childrenPicker, isChecked) {
     if (childrenPicker) {
+      DomainPicker.Selected = [];
       const childCheckboxes = childrenPicker.querySelectorAll("input[type=checkbox]");
-      childCheckboxes.forEach((childCheckbox) => {
+      childCheckboxes.forEach(childCheckbox => {
         childCheckbox.checked = isChecked;
 
         // Update DomainPicker.Selected
@@ -308,7 +309,7 @@ window.DomainPicker = (function () {
     initBaseContainer(container, componentId);
 
     const checkboxes = document.querySelectorAll(`${container} input[type=checkbox]:checked`);
-    checkboxes.forEach((checkbox) => {
+    checkboxes.forEach(checkbox => {
       DomainPicker.Selected.push(checkbox.value);
     });
 
