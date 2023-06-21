@@ -51,7 +51,7 @@
         <button id="hide-modal">Hide Modal</button>
     </div>
 
-    <div id="domainTags" class="topbar">
+    <div id="fieldTags" class="topbar">
         <span></span>
     </div>
 
@@ -61,21 +61,47 @@
 
     <script src="assets/js/field-picker.js"></script>
     <script>
-        let instance = FieldPicker("#container", { data: window.FieldOptions.data });
+        let instance = FieldPicker("#container", {data: window.FieldOptions.data});
         document.getElementById('show-modal').addEventListener('click', instance.Show);
         document.getElementById('hide-modal').addEventListener('click', instance.Hide);
         document.getElementById('show-modal').click(); // switch modal to show instead of hide (default)
 
-        const domainTagsElement = document.getElementById("domainTags");
+        const fieldTagsElement = document.getElementById("fieldTags");
 
-        function refreshFieldTags(selected) {
-            console.log("selected", selected)
-            domainTagsElement.innerHTML = "";
-            selected.forEach(domain => {
-                let tag = document.createElement("span");
-                tag.textContent = domain;
-                domainTagsElement.appendChild(tag);
-            });
+        // Field Bar UI Updater
+        function refreshFieldTags(codes) {
+            const codeSet = new Set(codes);
+            const cnames = [];
+
+            function traverse(data) {
+                data.forEach((item) => {
+                    const {cname, code, children} = item;
+
+                    if (codeSet.has("all")) {
+                        if (code === "all") {
+                            cnames.push(cname);
+                        }
+                    } else if (codeSet.has(code)) {
+                        cnames.push(cname);
+                    } else if (children && children.length) {
+                        const childCnames = [];
+                        for (let i = 0; i < children.length; i++) {
+                            const child = children[i];
+                            if (codeSet.has(child.code)) {
+                                childCnames.push(child.cname);
+                            }
+                        }
+                        if (childCnames.length > 0) {
+                            cnames.push(`${cname}-${childCnames.join(", ")}`);
+                        }
+                    }
+                });
+            }
+
+            traverse(window.FieldOptions.data);
+
+            const html = `<span>${cnames.includes("all") ? "all" : cnames.join(", ")}</span>`;
+            fieldTagsElement.innerHTML = html;
         }
 
         instance.onChange = function (selected) {
