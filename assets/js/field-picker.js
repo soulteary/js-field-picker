@@ -21,7 +21,7 @@ window.FieldPicker = (function () {
 
     return `
       <div class="flex flex-row justify-between">
-        <div class="domain-picker-title">${cname}</div>
+        <div class="field-picker-title">${cname}</div>
         <div>
           <label for="domain-${code}" class="domain-checkBox checkBox-inner">
             <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
@@ -37,7 +37,7 @@ window.FieldPicker = (function () {
     const state = checked ? "checked" : "";
     let content = `
       <div class="flex flex-row justify-between">
-        <div class="domain-picker-title">${cname}</div>
+        <div class="field-picker-title">${cname}</div>
         <div>
           <label for="domain-${code}" class="domain-checkBox checkBox-inner">
             <input id="domain-${code}" type="checkbox" name="domain-${code}" value="${code}" ${state}>
@@ -54,8 +54,8 @@ window.FieldPicker = (function () {
       content = `
         <div class="flex flex-row justify-between">
           <div class="flex flex-row">
-            <div class="domain-picker-append">-</div>
-            <div class="domain-picker-title">${cname}</div>
+            <div class="field-picker-append">-</div>
+            <div class="field-picker-title">${cname}</div>
           </div>
           <div>
             <label for="domain-${code}" class="domain-checkBox checkBox-inner">
@@ -69,7 +69,7 @@ window.FieldPicker = (function () {
     }
 
     return `
-      <div class="domain-picker-item">
+      <div class="field-picker-item">
         ${content}
       </div>
     `;
@@ -81,7 +81,7 @@ window.FieldPicker = (function () {
     }
 
     return `
-      <div class="domain-picker-item-children">
+      <div class="field-picker-item-children">
         ${dataset.map((item) => getSingleDomain(item)).join("")}
       </div>
     `;
@@ -89,11 +89,11 @@ window.FieldPicker = (function () {
 
   function initBaseContainer(container, componentId) {
     const template = `
-      <div id="${componentId}" class="picker-box domain-picker">
-        <div class="domain-picker-item">
-          ${getRootDomain(DomainOptions.data)}
-          <div class="domain-picker-item-children">
-            ${DomainOptions.data
+      <div id="${componentId}" class="picker-box field-picker">
+        <div class="field-picker-item">
+          ${getRootDomain(FieldOptions.data)}
+          <div class="field-picker-item-children">
+            ${FieldOptions.data
               .slice(1)
               .map((dataset) => getSingleDomain(dataset))
               .join("")}
@@ -112,10 +112,10 @@ window.FieldPicker = (function () {
    * Attach event listeners to domain append +/-
    */
   function bindAppendEvents(container) {
-    const appendIcons = document.querySelectorAll(`${container} .domain-picker-append`);
+    const appendIcons = document.querySelectorAll(`${container} .field-picker-append`);
     appendIcons.forEach((icon) => {
       icon.addEventListener("click", function () {
-        const children = this.closest(".domain-picker-item").querySelector(".domain-picker-item-children");
+        const children = this.closest(".field-picker-item").querySelector(".field-picker-item-children");
         const isHidden = children.classList.contains("hide");
         if (isHidden) {
           children.classList.remove("hide");
@@ -158,8 +158,8 @@ window.FieldPicker = (function () {
    * @param {*} container
    */
   function updatePickerMaxHeight(container) {
-    const picker = document.querySelector(`${container} .domain-picker`);
-    const expandedContent = picker.querySelector(".domain-picker-item-children");
+    const picker = document.querySelector(`${container} .field-picker`);
+    const expandedContent = picker.querySelector(".field-picker-item-children");
     const expandedContentHeight = expandedContent.offsetHeight;
     const pickerPadding = 24;
     const pickerMaxHeight = expandedContentHeight + pickerPadding;
@@ -171,10 +171,10 @@ window.FieldPicker = (function () {
    * @param {*} checkbox
    */
   function updateParentCheckboxState(checkbox) {
-    const parentItem = checkbox.closest(".domain-picker-item");
+    const parentItem = checkbox.closest(".field-picker-item");
     const parentCheckboxWrapper = parentItem.parentNode.parentNode.querySelector(".checkBox");
-    const siblings = parentItem.parentNode.querySelectorAll(".domain-picker-item");
-    const checkedSiblings = parentItem.parentNode.querySelectorAll(".domain-picker-item input[type=checkbox]:checked");
+    const siblings = parentItem.parentNode.querySelectorAll(".field-picker-item");
+    const checkedSiblings = parentItem.parentNode.querySelectorAll(".field-picker-item input[type=checkbox]:checked");
 
     if (siblings.length > 1) {
       if (checkedSiblings.length === siblings.length) {
@@ -189,7 +189,7 @@ window.FieldPicker = (function () {
       }
     }
 
-    const parentPicker = parentItem.parentNode.parentNode.closest(".domain-picker-item");
+    const parentPicker = parentItem.parentNode.parentNode.closest(".field-picker-item");
     if (parentPicker) {
       const parentCheckbox = parentPicker.querySelector("input[type=checkbox]");
       updateParentCheckboxState(parentCheckbox);
@@ -204,8 +204,8 @@ window.FieldPicker = (function () {
    */
   function handleCheckboxClick(event) {
     const isChecked = event.target.checked;
-    const currentPicker = event.target.closest(".domain-picker-item");
-    const childrenPicker = currentPicker.querySelector(".domain-picker-item-children");
+    const currentPicker = event.target.closest(".field-picker-item");
+    const childrenPicker = currentPicker.querySelector(".field-picker-item-children");
 
     toggleChildrenCheckboxes(childrenPicker, isChecked);
 
@@ -264,11 +264,11 @@ window.FieldPicker = (function () {
    * @param {*} currentPicker
    */
   function updateParentState(checkbox) {
-    const parentItem = checkbox.closest(".domain-picker-item-children");
+    const parentItem = checkbox.closest(".field-picker-item-children");
     if (parentItem) {
       const parentCheckbox = parentItem.previousElementSibling.querySelector("input[type=checkbox]");
-      const siblings = parentItem.querySelectorAll(".domain-picker-item");
-      const checkedSiblings = parentItem.querySelectorAll(".domain-picker-item input[type=checkbox]:checked");
+      const siblings = parentItem.querySelectorAll(".field-picker-item");
+      const checkedSiblings = parentItem.querySelectorAll(".field-picker-item input[type=checkbox]:checked");
 
       if (checkedSiblings.length === siblings.length) {
         parentCheckbox.checked = true;
@@ -301,7 +301,7 @@ window.FieldPicker = (function () {
 
   function bootstrap(container, options) {
     const { datasets } = options;
-    const componentId = "domain-picker-" + Math.random().toString(36).slice(-6);
+    const componentId = "field-picker-" + Math.random().toString(36).slice(-6);
     FieldPicker.ComponentId = componentId;
     FieldPicker.options = options;
     FieldPicker.Domain = datasets;

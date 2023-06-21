@@ -1,4 +1,4 @@
-window.DomainOptions = {
+window.FieldOptions = {
   data: [
     { name: "All", cname: "所有领域", code: "all" },
     {

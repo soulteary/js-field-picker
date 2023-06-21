@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" href="assets/css/common.css">
     <link rel="stylesheet" href="assets/css/field-picker.css">
-    <script src="mock/domain-data.js"></script>
+    <script src="mock/field-data.js"></script>
 
     <style>
         .demo body {
@@ -51,7 +51,7 @@
         <button id="hide-modal">Hide Modal</button>
     </div>
 
-    <div id="domainTags" class="topbar-text">
+    <div id="domainTags" class="topbar">
         <span></span>
     </div>
 
@@ -61,14 +61,14 @@
 
     <script src="assets/js/field-picker.js"></script>
     <script>
-        let instance = FieldPicker("#container", { data: window.DomainOptions.data });
+        let instance = FieldPicker("#container", { data: window.FieldOptions.data });
         document.getElementById('show-modal').addEventListener('click', instance.Show);
         document.getElementById('hide-modal').addEventListener('click', instance.Hide);
         document.getElementById('show-modal').click(); // switch modal to show instead of hide (default)
 
         const domainTagsElement = document.getElementById("domainTags");
 
-        function refreshDomainTags(selected) {
+        function refreshFieldTags(selected) {
             console.log("selected", selected)
             domainTagsElement.innerHTML = "";
             selected.forEach(domain => {
@@ -79,10 +79,10 @@
         }
 
         instance.onChange = function (selected) {
-            refreshDomainTags(selected);
+            refreshFieldTags(selected);
         };
 
-        refreshDomainTags(instance.Selected);
+        refreshFieldTags(instance.Selected);
 
 
     </script>
