@@ -7,7 +7,7 @@
     <title>Dynamic Demo</title>
 
     <link rel="stylesheet" href="assets/css/common.css">
-    <link rel="stylesheet" href="assets/css/domain-picker.css">
+    <link rel="stylesheet" href="assets/css/field-picker.css">
     <script src="mock/domain-data.js"></script>
 
     <style>
@@ -59,9 +59,9 @@
         <!-- container for region picker -->
     </div>
 
-    <script src="assets/js/domain-picker.js"></script>
+    <script src="assets/js/field-picker.js"></script>
     <script>
-        let instance = DomainPicker("#container", { data: window.DomainOptions.data });
+        let instance = FieldPicker("#container", { data: window.DomainOptions.data });
         document.getElementById('show-modal').addEventListener('click', instance.Show);
         document.getElementById('hide-modal').addEventListener('click', instance.Hide);
         document.getElementById('show-modal').click(); // switch modal to show instead of hide (default)
