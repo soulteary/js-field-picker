@@ -16,7 +16,7 @@ window.FieldPicker = (function () {
   function getRootField(datasets) {
     const [rootInfo] = datasets;
     const { cname, code } = rootInfo;
-    const allChildrenChecked = datasets.every(dataset => dataset.checked);
+    const allChildrenChecked = datasets.every((dataset) => dataset.checked);
     const state = allChildrenChecked ? "checked" : "";
 
     return `
@@ -48,8 +48,8 @@ window.FieldPicker = (function () {
     `;
 
     if (children && children.length) {
-      const allChildrenChecked = children.every(child => child.checked);
-      const indeterminateState = !allChildrenChecked && children.some(child => child.checked);
+      const allChildrenChecked = children.every((child) => child.checked);
+      const indeterminateState = !allChildrenChecked && children.some((child) => child.checked);
 
       content = `
         <div class="flex flex-row justify-between">
@@ -82,7 +82,7 @@ window.FieldPicker = (function () {
 
     return `
       <div class="field-picker-item-children">
-        ${dataset.map(item => getSingleField(item)).join("")}
+        ${dataset.map((item) => getSingleField(item)).join("")}
       </div>
     `;
   }
@@ -91,11 +91,11 @@ window.FieldPicker = (function () {
     const template = `
       <div id="${componentId}" class="picker-box field-picker">
         <div class="field-picker-item">
-          ${getRootField(FieldOptions.data)}
+          ${getRootField(FieldPicker.Field)}
           <div class="field-picker-item-children">
-            ${FieldOptions.data
+            ${FieldPicker.Field
               .slice(1)
-              .map(dataset => getSingleField(dataset))
+              .map((dataset) => getSingleField(dataset))
               .join("")}
           </div>
         </div>
@@ -154,12 +154,12 @@ window.FieldPicker = (function () {
    */
   function updateSelectData(containerElement) {
     const checkboxes = containerElement.querySelectorAll(".field-checkBox input[type=checkbox]");
-    checkboxes.forEach(checkbox => {
+    checkboxes.forEach((checkbox) => {
       updateParentCheckboxState(checkbox);
     });
 
     FieldPicker.Selected = [];
-    checkboxes.forEach(checkbox => {
+    checkboxes.forEach((checkbox) => {
       if (checkbox.checked) {
         const fieldId = checkbox.value;
         FieldPicker.Selected.push(fieldId);
@@ -244,7 +244,7 @@ window.FieldPicker = (function () {
   function toggleChildrenCheckboxes(childrenPicker, isChecked) {
     if (childrenPicker) {
       const childCheckboxes = childrenPicker.querySelectorAll("input[type=checkbox]");
-      childCheckboxes.forEach(childCheckbox => {
+      childCheckboxes.forEach((childCheckbox) => {
         childCheckbox.checked = isChecked;
       });
     }
@@ -291,10 +291,10 @@ window.FieldPicker = (function () {
   }
 
   function bootstrap(container, options) {
-    const { datasets } = options;
+    const { data } = options;
     const componentId = "field-picker-" + Math.random().toString(36).slice(-6);
     FieldPicker.ComponentId = componentId;
-    FieldPicker.Field = datasets;
+    FieldPicker.Field = data;
     FieldPicker.Selected = [];
     FieldPicker.options = options;
     FieldPicker.onChange = options.onChange;
