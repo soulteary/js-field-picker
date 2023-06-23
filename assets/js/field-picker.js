@@ -1,17 +1,26 @@
 window.FieldPicker = (function () {
-  var FieldPicker = {
-    Show: showPicker,
-    Hide: hidePicker,
-    GetSelected: function () {
-      return this.Selected;
-    },
-
-    options: {},
-    Selected: null,
-    Field: null,
+  var Picker = {
+    // expose states
     ComponentId: "",
-    onChange: null,
+    Options: {},
+    Selected: [],
+    Fields: [],
+    Skips: [],
+    // expose functions
+    GetSelected: GetSelected,
+    Show: ShowPicker,
+    Hide: HidePicker,
   };
+
+  function GetSelected() {
+    return this.Selected;
+  }
+
+  function Feedback() {
+    if (Picker.Options && Picker.Options.updater && typeof Picker.Options.updater === "function") {
+      Picker.Options.updater(Picker.Selected);
+    }
+  }
 
   function getRootField(datasets) {
     const [rootInfo] = datasets;
@@ -87,14 +96,13 @@ window.FieldPicker = (function () {
     `;
   }
 
-  function initBaseContainer(container, componentId) {
+  function InitBaseContainer(container, componentId) {
     const template = `
       <div id="${componentId}" class="picker-box field-picker">
         <div class="field-picker-item">
-          ${getRootField(FieldPicker.Field)}
+          ${getRootField(Picker.Fields)}
           <div class="field-picker-item-children">
-            ${FieldPicker.Field
-              .slice(1)
+            ${Picker.Fields.slice(1)
               .map((dataset) => getSingleField(dataset))
               .join("")}
           </div>
@@ -158,22 +166,15 @@ window.FieldPicker = (function () {
       updateParentCheckboxState(checkbox);
     });
 
-    FieldPicker.Selected = [];
+    Picker.Selected = [];
     checkboxes.forEach((checkbox) => {
       if (checkbox.checked) {
         const fieldId = checkbox.value;
-        FieldPicker.Selected.push(fieldId);
+        Picker.Selected.push(fieldId);
       }
     });
 
-    if (FieldPicker.options.updater && typeof FieldPicker.options.updater === "function") {
-      FieldPicker.options.updater(FieldPicker.Selected);
-    }
-
-    // Call the onChange callback
-    if (FieldPicker.onChange && typeof FieldPicker.onChange === "function") {
-      FieldPicker.onChange(FieldPicker.Selected);
-    }
+    Feedback();
   }
 
   /**
@@ -277,31 +278,75 @@ window.FieldPicker = (function () {
   }
 
   /**
-   * Show the field picker
+   * Show the region picker
    */
-  function showPicker() {
-    document.getElementById(FieldPicker.ComponentId).classList.remove("hide");
+  function ShowPicker() {
+    const container = document.getElementById(Picker.ComponentId);
+    container.className = container.className.replace(/\s?hide/g, "");
   }
 
   /**
-   * Hide the field picker
+   * Hide the region picker
    */
-  function hidePicker() {
-    document.getElementById(FieldPicker.ComponentId).classList.add("hide");
+  function HidePicker() {
+    const container = document.getElementById(Picker.ComponentId);
+    container.className = container.className + " hide";
   }
 
-  function bootstrap(container, options) {
-    const { data } = options;
+  function Bootstrap(container, options) {
     const componentId = "field-picker-" + Math.random().toString(36).slice(-6);
-    FieldPicker.ComponentId = componentId;
-    FieldPicker.Field = data;
-    FieldPicker.Selected = [];
-    FieldPicker.options = options;
-    FieldPicker.onChange = options.onChange;
+    Picker.ComponentId = componentId;
 
-    initBaseContainer(container, componentId);
-    return FieldPicker;
+    Picker.Options = options;
+    const { data, preselected, skips } = options;
+
+    Picker.Fields = data;
+
+    const checkboxCheckedbyRemoteAPI = data
+      .map((field) => {
+        if (field.children && field.children.length) {
+          return field.children.filter((item) => item.checked);
+        }
+        return false;
+      })
+      .filter((n) => n)
+      .reduce((a, b) => a.concat(b), [])
+      .map((item) => item.code);
+
+    Picker.Selected = checkboxCheckedbyRemoteAPI;
+    if (preselected) {
+      if (typeof preselected === "string") {
+        // use all fields
+        if (preselected === "all") {
+          Picker.Selected = Picker.Fields.map((field) => field.code);
+        } else {
+          if (!Picker.Selected.includes(preselected)) {
+            Picker.Selected = Picker.Selected.concat(preselected);
+          }
+        }
+      } else if (preselected && preselected.length) {
+        preselected.forEach((selected) => {
+          if (!Picker.Selected.includes(selected)) {
+            Picker.Selected = Picker.Selected.concat(selected);
+          }
+        });
+      }
+    }
+
+    if (skips) {
+      if (typeof skips === "string") {
+        Picker.Skips = [skips];
+      } else if (skips.length) {
+        Picker.Skips = skips;
+      }
+    }
+
+    InitBaseContainer(container, componentId);
+
+    Feedback();
+
+    return Picker;
   }
 
-  return bootstrap;
+  return Bootstrap;
 })();

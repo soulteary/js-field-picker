@@ -11,6 +11,48 @@
     <script src="mock/field-data.js"></script>
 
     <style>
+        * {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -moz-tap-highlight-color: rgba(0, 0, 0, 0);
+            -ms-tap-highlight-color: rgba(0, 0, 0, 0);
+            -o-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+
+        *,
+        *:before,
+        *:after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            position: relative;
+            margin: 0 auto;
+            font: 12px "Noto Sans SC", "Open Sans";
+            background-color: #ffffff;
+            color: #333333;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -moz-tap-highlight-color: rgba(0, 0, 0, 0);
+            -ms-tap-highlight-color: rgba(0, 0, 0, 0);
+            -o-tap-highlight-color: rgba(0, 0, 0, 0);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-font-smoothing: antialiased;
+            -ms-font-smoothing: antialiased;
+            -o-font-smoothing: antialiased;
+        }
+
+        html,
+        body {
+            -webkit-text-size-adjust: none;
+            -moz-text-size-adjust: none;
+            -ms-text-size-adjust: none;
+            -o-text-size-adjust: none;
+            text-size-adjust: none;
+        }
+
+
         .demo body {
             width: 100vw;
             height: 100vh;
@@ -23,36 +65,57 @@
             position: relative;
             width: 600px;
             height: 600px;
-            overflow-y: scroll;
-            padding: 10px;
         }
 
-        .demo #container .picker-box {
+        .demo #container .region-picker-container {
             position: relative;
             margin: 40px auto;
         }
 
+
         .demo #demo-topbar {
-            width: 240px;
-            margin: 40px auto;
+            width: 100%;
+            margin: 0 auto 20px;
+            background: #000;
+        }
+
+        .demo #demo-topbar span {
+            color: #fff;
+            font-size: 24px;
+            display: inline-block;
+            line-height: 100%;
+            vertical-align: middle;
+        }
+
+        .demo #demo-topbar .button-group {
+            margin: 0 auto;
+            width: 400px;
         }
 
         .demo #demo-topbar button {
-            width: 80px;
+            width: 120px;
             margin: 4px;
             padding: 8px;
+        }
+
+        .demo .debug-output {
+            background: #000;
+            color: #fff;
+            height: 50px;
+            line-height: 2;
+            font-size: 25px;
+            text-align: center;
         }
     </style>
 </head>
 
 <body>
     <div id="demo-topbar">
-        <button id="show-modal">Show Modal</button>
-        <button id="hide-modal">Hide Modal</button>
-    </div>
-
-    <div id="fieldTags" class="topbar">
-        <span></span>
+        <div class="button-group">
+            <span>ACTION: </span>
+            <button id="show-modal">Show Modal</button>
+            <button id="hide-modal">Hide Modal</button>
+        </div>
     </div>
 
     <div id="container">
@@ -61,54 +124,14 @@
 
     <script src="assets/js/field-picker.js"></script>
     <script>
-        let instance = FieldPicker("#container", {data: window.FieldOptions.data});
+        let instance = FieldPicker("#container", {
+            data: window.FieldOptions.data, updater: function (data) {
+                console.log(data)
+            }
+        });
         document.getElementById('show-modal').addEventListener('click', instance.Show);
         document.getElementById('hide-modal').addEventListener('click', instance.Hide);
         document.getElementById('show-modal').click(); // switch modal to show instead of hide (default)
-
-        const fieldTagsElement = document.getElementById("fieldTags");
-
-        // Field Bar UI Updater
-        function refreshFieldTags(codes) {
-            const codeSet = new Set(codes);
-            const cnames = [];
-
-            function traverse(data) {
-                data.forEach((item) => {
-                    const {cname, code, children} = item;
-
-                    if (codeSet.has("all")) {
-                        if (code === "all") {
-                            cnames.push(cname);
-                        }
-                    } else if (codeSet.has(code)) {
-                        cnames.push(cname);
-                    } else if (children && children.length) {
-                        const childCnames = [];
-                        for (let i = 0; i < children.length; i++) {
-                            const child = children[i];
-                            if (codeSet.has(child.code)) {
-                                childCnames.push(child.cname);
-                            }
-                        }
-                        if (childCnames.length > 0) {
-                            cnames.push(`${cname}-${childCnames.join(", ")}`);
-                        }
-                    }
-                });
-            }
-
-            traverse(window.FieldOptions.data);
-
-            const html = `<span>${cnames.includes("all") ? "all" : cnames.join(", ")}</span>`;
-            fieldTagsElement.innerHTML = html;
-        }
-
-        instance.onChange = function (selected) {
-            refreshFieldTags(selected);
-        };
-
-        refreshFieldTags(instance.Selected);
 
 
     </script>

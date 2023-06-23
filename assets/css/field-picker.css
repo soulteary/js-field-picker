@@ -1,3 +1,4 @@
+
 .topbar {
     width: 577px;
     height: 24px;
@@ -5,7 +6,7 @@
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
-    color: #21293C;
+    color: #21293c;
     margin: 0 auto;
     margin-top: 2px;
     overflow: hidden;
@@ -13,50 +14,50 @@
     -ms-text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
-}
-
-.topbar span {
+  }
+  
+  .topbar span {
     margin-right: 6px;
-}
-
-.picker-box {
+  }
+  
+  .picker-box {
     position: absolute;
     z-index: 999;
-    background: #FFFFFF;
+    background: #ffffff;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.12);
-}
-
-.field-picker {
+  }
+  
+  .field-picker {
     width: 300px;
     max-height: 286px;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
     line-height: 22px;
-    color: #21293C;
+    color: #21293c;
     padding: 24px;
     padding-top: 8px;
     overflow-y: scroll;
-}
-
-.field-picker .field-picker-item {
+  }
+  
+  .field-picker .field-picker-item {
     margin-top: 16px;
-}
-
-.field-picker .field-picker-item .field-picker-title {
-    font-family: 'Noto Sans SC';
+  }
+  
+  .field-picker .field-picker-item .field-picker-title {
+    font-family: "Noto Sans SC";
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
     line-height: 22px;
-    color: #21293C;
-}
-
-.field-picker .field-picker-item-children {
+    color: #21293c;
+  }
+  
+  .field-picker .field-picker-item-children {
     margin-left: 12px;
-}
-
-.field-picker .field-picker-item-children .field-picker-append {
+  }
+  
+  .field-picker .field-picker-item-children .field-picker-append {
     width: 8px;
     font-style: normal;
     font-weight: 400;
@@ -67,8 +68,9 @@
     cursor: pointer;
     -webkit-user-select: none;
     user-select: none;
-}
-
-.field-picker .field-picker-item-children .field-picker-append2 {
+  }
+  
+  .field-picker .field-picker-item-children .field-picker-append2 {
     width: 30px;
-}
+  }
+  
