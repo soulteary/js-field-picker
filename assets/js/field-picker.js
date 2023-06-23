@@ -35,7 +35,7 @@ window.FieldPicker = function (container, options) {
 
     return `
       <div class="field-picker-row-container">
-        <div class="field-picker-title">${cname}</div>
+        <div class="field-picker-title clickable">${cname}</div>
         <div class="field-picker-checkbox-container">
           <label for="field-${code}" class="field-picker-checkbox-label field-picker-checkbox-group">
             <input id="field-${code}" type="checkbox" name="field-${code}" value="${code}" ${state}>
@@ -51,7 +51,7 @@ window.FieldPicker = function (container, options) {
     const state = checked ? "checked" : "";
     let content = `
       <div class="field-picker-row-container">
-        <div class="field-picker-title">${cname}</div>
+        <div class="field-picker-title clickable">${cname}</div>
         <div class="field-picker-checkbox-container">
           <label for="field-${code}" class="field-picker-checkbox-label field-picker-checkbox-group">
             <input id="field-${code}" type="checkbox" name="field-${code}" value="${code}" ${state}>
@@ -69,7 +69,7 @@ window.FieldPicker = function (container, options) {
         <div class="field-picker-row-container">
           <div class="field-picker-menu-group">
             <div class="field-picker-sign clickable">+</div>
-            <div class="field-picker-title">${cname}</div>
+            <div class="field-picker-title clickable">${cname}</div>
           </div>
           <div class="field-picker-checkbox-container">
             <label for="field-${code}" class="field-picker-checkbox-label field-picker-checkbox-group">
@@ -116,47 +116,9 @@ window.FieldPicker = function (container, options) {
     const containerElement = document.querySelector(container);
     containerElement.innerHTML = template;
 
-    bindAppendEvents(containerElement);
     bindCheckboxEvents(containerElement);
 
     updateSelectData(containerElement);
-  }
-
-  /**
-   * Attach event listeners to field append +/-
-   */
-  function bindAppendEvents(containerElement) {
-    containerElement.addEventListener("click", function (event) {
-      const appendIcon = event.target.closest(".field-picker-sign");
-      if (appendIcon) {
-        const children = appendIcon.closest(".field-picker-item-group").querySelector(".field-picker-children-group");
-        const isHidden = children.classList.contains("hide");
-        if (isHidden) {
-          children.classList.remove("hide");
-          appendIcon.textContent = "-";
-        } else {
-          children.classList.add("hide");
-          appendIcon.textContent = "+";
-        }
-
-        updatePickerMaxHeight(containerElement);
-      }
-    });
-
-    updatePickerMaxHeight(containerElement);
-  }
-
-  /**
-   * Update the max-height of the field picker based on the expanded content
-   * @param {*} containerElement
-   */
-  function updatePickerMaxHeight(containerElement) {
-    const picker = containerElement.querySelector(".field-picker-container");
-    const expandedContent = picker.querySelector(".field-picker-children-group");
-    const expandedContentHeight = expandedContent.offsetHeight;
-    const pickerPadding = 24;
-    const pickerMaxHeight = expandedContentHeight + pickerPadding;
-    // picker.style.maxHeight = pickerMaxHeight +50+ "px";
   }
 
   /**
@@ -282,6 +244,38 @@ window.FieldPicker = function (container, options) {
     }
   }
 
+  function triggerExpend(btnExpend) {
+    if (!btnExpend) return;
+    const children = btnExpend.closest(".field-picker-item-group").querySelector(".field-picker-children-group");
+    const isHidden = children.classList.contains("hide");
+    if (isHidden) {
+      children.classList.remove("hide");
+      btnExpend.textContent = "-";
+    } else {
+      children.classList.add("hide");
+      btnExpend.textContent = "+";
+    }
+  }
+
+  function handleExpendClick() {
+    const container = document.getElementById(Picker.ComponentId);
+    container.addEventListener("click", function (event) {
+      const btnExpend = event.target.closest(".field-picker-sign");
+      triggerExpend(btnExpend);
+    });
+  }
+
+  function handleTitleClick() {
+    const container = document.getElementById(Picker.ComponentId);
+    container.addEventListener("click", function (event) {
+      if (!event.target.closest(".field-picker-title")) return;
+      const rowContainer = event.target.closest(".field-picker-menu-group");
+      if (!rowContainer) return;
+      const btnExpend = rowContainer.querySelector(".field-picker-sign");
+      triggerExpend(btnExpend);
+    });
+  }
+
   /**
    * Show the region picker
    */
@@ -362,6 +356,9 @@ window.FieldPicker = function (container, options) {
     }
 
     InitBaseContainer(container, componentId);
+
+    handleExpendClick();
+    handleTitleClick();
 
     Feedback();
 
