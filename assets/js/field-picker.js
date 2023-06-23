@@ -51,7 +51,7 @@ window.FieldPicker = function (container, options) {
     const state = checked ? "checked" : "";
     let content = `
       <div class="field-picker-row-container">
-        <div class="field-picker-title clickable">${cname}</div>
+        <div class="field-picker-title">${cname}</div>
         <div class="field-picker-checkbox-container">
           <label for="field-${code}" class="field-picker-checkbox-label field-picker-checkbox-group">
             <input id="field-${code}" type="checkbox" name="field-${code}" value="${code}" ${state}>
@@ -244,16 +244,26 @@ window.FieldPicker = function (container, options) {
     }
   }
 
-  function triggerExpend(btnExpend) {
+  function triggerExpend(btnExpend, forceState) {
     if (!btnExpend) return;
     const children = btnExpend.closest(".field-picker-item-group").querySelector(".field-picker-children-group");
-    const isHidden = children.classList.contains("hide");
-    if (isHidden) {
-      children.classList.remove("hide");
-      btnExpend.textContent = "-";
+    if (typeof forceState === "string") {
+      if (forceState === "expand") {
+        children.classList.remove("hide");
+        btnExpend.textContent = "-";
+      } else if (forceState === "collapse") {
+        children.classList.add("hide");
+        btnExpend.textContent = "+";
+      }
     } else {
-      children.classList.add("hide");
-      btnExpend.textContent = "+";
+      const isHidden = children.classList.contains("hide");
+      if (isHidden) {
+        children.classList.remove("hide");
+        btnExpend.textContent = "-";
+      } else {
+        children.classList.add("hide");
+        btnExpend.textContent = "+";
+      }
     }
   }
 
@@ -270,9 +280,29 @@ window.FieldPicker = function (container, options) {
     container.addEventListener("click", function (event) {
       if (!event.target.closest(".field-picker-title")) return;
       const rowContainer = event.target.closest(".field-picker-menu-group");
-      if (!rowContainer) return;
-      const btnExpend = rowContainer.querySelector(".field-picker-sign");
-      triggerExpend(btnExpend);
+      if (rowContainer) {
+        const btnExpend = rowContainer.querySelector(".field-picker-sign");
+        if (btnExpend) {
+          triggerExpend(btnExpend);
+        }
+      } else {
+        const container = event.target.closest(".field-picker-item-group").querySelector(".field-picker-children-group");
+        const btnExpends = container.querySelectorAll(".field-picker-sign");
+
+        const allExpendStates = Array.from(btnExpends)
+          .map((btnExpend) => btnExpend.innerHTML.trim() == "-")
+          .filter((n) => n);
+
+        if (allExpendStates.length !== btnExpends.length) {
+          btnExpends.forEach((btnExpend) => {
+            triggerExpend(btnExpend, "expand");
+          });
+        } else {
+          btnExpends.forEach((btnExpend) => {
+            triggerExpend(btnExpend);
+          });
+        }
+      }
     });
   }
 
