@@ -31,44 +31,29 @@
   display: none;
 }
 
-.field-picker-container .flex {
-  display: box;
-  /* OLD - Android 4.4- */
-  display: -webkit-box;
-  /* OLD - iOS 6-, Safari 3.1-6 */
-  display: -moz-box;
-  /* OLD - Firefox 19- (buggy but mostly works) */
-  display: -ms-flexbox;
-  /* TWEENER - IE 10 */
-  display: -webkit-flex;
-  /* NEW - Chrome */
-  display: flex;
-  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+.field-picker-container .field-picker-row-container {
+  display: block;
+  overflow: hidden;
 }
 
-.field-picker-container .flex-row {
-  -webkit-box-orient: horizontal;
-  -webkit-flex-direction: row;
-  -moz-flex-direction: row;
-  -ms-flex-direction: row;
-  -o-flex-direction: row;
-  flex-direction: row;
+.field-picker-container .field-picker-title,
+.field-picker-container .field-picker-menu-group {
+  float: left;
 }
 
-.field-picker-container .justify-between {
-  -webkit-box-pack: space-between;
-  -webkit-justify-content: space-between;
-  -moz-justify-content: space-between;
-  -ms-justify-content: space-around;
-  -o-justify-content: space-between;
-  justify-content: space-between;
+.field-picker-container .field-picker-checkbox-container {
+  float: right;
 }
 
-.field-picker-container .field-picker-item {
+.field-picker-container .field-picker-menu-group {
+  overflow: hidden;
+}
+
+.field-picker-container .field-picker-item-group {
   margin-top: 16px;
 }
 
-.field-picker-container .field-picker-item .field-picker-title {
+.field-picker-container .field-picker-item-group .field-picker-title {
   font-family: "Noto Sans SC";
   font-style: normal;
   font-weight: 400;
@@ -77,11 +62,12 @@
   color: #21293c;
 }
 
-.field-picker-container .field-picker-item-children {
+.field-picker-container .field-picker-children-group {
   margin-left: 12px;
 }
 
-.field-picker-container .field-picker-item-children .field-picker-append {
+.field-picker-container .field-picker-children-group .field-picker-sign {
+  float: left;
   width: 8px;
   font-style: normal;
   font-weight: 400;
@@ -89,13 +75,6 @@
   line-height: 22px;
   color: #667190;
   margin-right: 6px;
-  cursor: pointer;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.field-picker-container .field-picker-item-children .field-picker-append2 {
-  width: 30px;
 }
 
 .field-picker-container input[type="checkbox"] {
@@ -135,12 +114,12 @@
   transition: transform 0.1s ease-in 0.05s;
 }
 
-.field-picker-container .field-checkbox-container .is-indeterminate {
+.field-picker-container .field-picker-checkbox-group .is-indeterminate {
   background: #eaf0f3;
   border: 0.5px solid #a9b5c2;
 }
 
-.field-picker-container .field-checkbox-container .is-indeterminate::before {
+.field-picker-container .field-picker-checkbox-group .is-indeterminate::before {
   content: "";
   position: absolute;
   display: block;
@@ -152,12 +131,12 @@
   top: 6px;
 }
 
-.field-picker-container .field-checkbox-container input[type="checkbox"]:checked + span {
+.field-picker-container .field-picker-checkbox-group input[type="checkbox"]:checked + span {
   background-color: #428eff;
   border-color: #428eff;
 }
 
-.field-picker-container .field-checkbox-container input[type="checkbox"]:checked + span::after {
+.field-picker-container .field-picker-checkbox-group input[type="checkbox"]:checked + span::after {
   -webkit-transform: rotate(45deg) scaleY(1);
   -moz-transform: rotate(45deg) scaleY(1);
   -ms-transform: rotate(45deg) scaleY(1);
@@ -165,13 +144,13 @@
   transform: rotate(45deg) scaleY(1);
 }
 
-.field-picker-container .field-checkbox-container input[type="checkbox"]:disabled + span {
+.field-picker-container .field-picker-checkbox-group input[type="checkbox"]:disabled + span {
   background: #eaf0f3;
   border: 0.5px solid #a9b5c2;
   border-radius: 2px;
 }
 
-.field-picker-container .field-checkbox-container input[type="checkbox"]:disabled + span::after {
+.field-picker-container .field-picker-checkbox-group input[type="checkbox"]:disabled + span::after {
   position: absolute;
   top: 1px;
   left: 5px;
