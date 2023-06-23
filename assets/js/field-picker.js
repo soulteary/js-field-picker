@@ -115,29 +115,23 @@ window.FieldPicker = function (container, options) {
 
     const containerElement = document.querySelector(container);
     containerElement.innerHTML = template;
-
-    bindCheckboxEvents(containerElement);
-
-    updateSelectData(containerElement);
   }
 
   /**
    * Update the select data of the field picker based on the expanded content
-   * @param {*} containerElement
    */
-  function updateSelectData(containerElement) {
-    const checkboxes = containerElement.querySelectorAll(".field-picker-checkbox-label input[type=checkbox]");
+  function updateSelectData() {
+    const container = document.getElementById(Picker.ComponentId);
+    const checkboxes = Array.from(container.querySelectorAll(".field-picker-checkbox-label input[type=checkbox]"));
     checkboxes.forEach((checkbox) => {
       updateParentCheckboxState(checkbox);
     });
 
-    Picker.Selected = [];
-    checkboxes.forEach((checkbox) => {
-      if (checkbox.checked) {
-        const fieldId = checkbox.value;
-        Picker.Selected.push(fieldId);
-      }
-    });
+    Picker.Selected = checkboxes
+      .map((checkbox) => {
+        return checkbox.checked ? checkbox.value : null;
+      })
+      .filter((value) => value);
 
     if (Picker.TriggerEachClick) {
       Feedback();
@@ -147,15 +141,18 @@ window.FieldPicker = function (container, options) {
   /**
    * checkbox bind event
    */
-  function bindCheckboxEvents(containerElement) {
-    containerElement.addEventListener("click", function (event) {
-      const checkbox = event.target.closest(".field-picker-checkbox-label input[type=checkbox]");
-      if (checkbox) {
-        handleCheckboxClick(checkbox, containerElement);
-
-        updateSelectData(containerElement);
-      }
-    });
+  function handleCheckboxClick() {
+    const container = document.getElementById(Picker.ComponentId);
+    container.addEventListener(
+      "click",
+      function (event) {
+        const checkbox = event.target.closest(".field-picker-checkbox-label input[type=checkbox]");
+        if (!checkbox) return;
+        updateCheckboxState(checkbox);
+        updateSelectData();
+      },
+      false
+    );
   }
 
   /**
@@ -194,7 +191,7 @@ window.FieldPicker = function (container, options) {
    * Function to handle checkbox events
    * @param {*} checkbox
    */
-  function handleCheckboxClick(checkbox) {
+  function updateCheckboxState(checkbox) {
     const isChecked = checkbox.checked;
     const currentPicker = checkbox.closest(".field-picker-item-group");
     const childrenPicker = currentPicker.querySelector(".field-picker-children-group");
@@ -389,6 +386,9 @@ window.FieldPicker = function (container, options) {
 
     handleExpendClick();
     handleTitleClick();
+    handleCheckboxClick();
+
+    updateSelectData();
 
     Feedback();
 
