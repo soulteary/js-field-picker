@@ -95,7 +95,7 @@ window.FieldPicker = function (container, options) {
     }
 
     return `
-      <div class="field-picker-children-group hide">
+      <div class="field-picker-children-group field-picker-groups hide">
         ${dataset.map((item) => getSingleField(item)).join("")}
       </div>
     `;
@@ -106,7 +106,7 @@ window.FieldPicker = function (container, options) {
       <div id="${componentId}" class="field-picker-container no-select">
         <div class="field-picker-item-group">
           ${getRootField(Picker.Fields.RootField)}
-          <div class="field-picker-children-group">
+          <div class="field-picker-children-group field-picker-top-groups">
             ${Picker.Fields.MainField.map((dataset) => getSingleField(dataset)).join("")}
           </div>
         </div>
@@ -148,7 +148,11 @@ window.FieldPicker = function (container, options) {
       function (event) {
         const checkbox = event.target.closest(".field-picker-checkbox-label input[type=checkbox]");
         if (!checkbox) return;
-        updateCheckboxState(checkbox);
+        if (checkbox.value == "field-all") {
+          updateCheckboxState(checkbox, true);
+        } else {
+          updateCheckboxState(checkbox);
+        }
         updateSelectData();
       },
       false
@@ -160,38 +164,64 @@ window.FieldPicker = function (container, options) {
    * @param {*} checkbox
    */
   function updateParentCheckboxState(checkbox) {
+    const container = document.getElementById(Picker.ComponentId);
+    const groups = container.querySelectorAll(".field-picker-top-groups > .field-picker-item-group");
     const parentItem = checkbox.closest(".field-picker-item-group");
-    const parentCheckboxWrapper = parentItem.parentNode.parentNode.querySelector(".field-checkbox-item");
-    const siblings = parentItem.parentNode.querySelectorAll(".field-picker-item-group");
-    const checkedSiblings = parentItem.parentNode.querySelectorAll(".field-picker-item-group input[type=checkbox]:checked");
 
-    if (siblings.length > 1) {
-      if (checkedSiblings.length === siblings.length) {
-        parentCheckboxWrapper.classList.remove("is-indeterminate");
-        parentCheckboxWrapper.classList.add("checked");
-      } else if (checkedSiblings.length > 0) {
-        parentCheckboxWrapper.classList.add("is-indeterminate");
-        parentCheckboxWrapper.classList.remove("checked");
-      } else {
-        parentCheckboxWrapper.classList.remove("is-indeterminate");
-        parentCheckboxWrapper.classList.remove("checked");
+    // todo reduce
+    Array.from(groups).forEach((group) => {
+      if (group == parentItem) {
+        const checkboxStateKeeper = group.querySelector(".field-checkbox-item");
+        const groupCheckboxes = Array.from(group.querySelectorAll(".field-picker-groups input[type=checkbox]"));
+        const checkedSiblings = Array.from(group.querySelectorAll(".field-picker-groups input[type=checkbox]:checked"));
+        const skipItems = groupCheckboxes.filter((item) => {
+          return Picker.Skips.includes(item.value);
+        }).length;
+
+        if (checkedSiblings.length) {
+          const parentContainer = checkboxStateKeeper.closest(".field-picker-checkbox-group");
+          const parentCheckbox = parentContainer.querySelector("input[type=checkbox]");
+          parentCheckbox.checked = false;
+
+          // allow skip elements
+          if (groupCheckboxes.length <= checkedSiblings.length + skipItems) {
+            checkboxStateKeeper.classList.remove("is-indeterminate");
+            checkboxStateKeeper.classList.add("checked");
+            parentCheckbox.checked = true;
+          } else if (checkedSiblings.length > 0) {
+            checkboxStateKeeper.classList.add("is-indeterminate");
+            checkboxStateKeeper.classList.remove("checked");
+          } else {
+            checkboxStateKeeper.classList.remove("is-indeterminate");
+            checkboxStateKeeper.classList.remove("checked");
+          }
+        }
       }
-    }
+    });
 
-    const parentPicker = parentItem.parentNode.parentNode.closest(".field-picker-item-group");
-    if (parentPicker) {
-      const parentCheckbox = parentPicker.querySelector("input[type=checkbox]");
-      updateParentCheckboxState(parentCheckbox);
-    }
+    const mainFieldsChecked = container.querySelectorAll(".field-picker-top-groups > .field-picker-item-group > .field-picker-row-container input[type=checkbox]:checked");
+    let all = document.querySelector(".field-picker-item-group #field-all");
+    let allCheckboxStateKeeper = all.closest(".field-picker-checkbox-group").querySelector(".field-checkbox-item");
+    all.checked = false;
 
-    updateParentState(checkbox);
+    if (mainFieldsChecked.length == groups.length) {
+      allCheckboxStateKeeper.classList.remove("is-indeterminate");
+      allCheckboxStateKeeper.classList.add("checked");
+      all.checked = true;
+    } else if (mainFieldsChecked.length > 1) {
+      allCheckboxStateKeeper.classList.remove("checked");
+      allCheckboxStateKeeper.classList.add("is-indeterminate");
+    } else {
+      allCheckboxStateKeeper.classList.remove("checked");
+      allCheckboxStateKeeper.classList.remove("is-indeterminate");
+    }
   }
 
   /**
    * Function to handle checkbox events
    * @param {*} checkbox
    */
-  function updateCheckboxState(checkbox) {
+  function updateCheckboxState(checkbox, isRoot) {
     const isChecked = checkbox.checked;
     const currentPicker = checkbox.closest(".field-picker-item-group");
     const childrenPicker = currentPicker.querySelector(".field-picker-children-group");
@@ -210,34 +240,9 @@ window.FieldPicker = function (container, options) {
     if (childrenPicker) {
       const childCheckboxes = childrenPicker.querySelectorAll("input[type=checkbox]");
       childCheckboxes.forEach((childCheckbox) => {
+        if (Picker.Skips.includes(childCheckbox.value)) return;
         childCheckbox.checked = isChecked;
       });
-    }
-  }
-
-  /**
-   * Function to update the state of the parent checkbox
-   * @param {*} checkbox
-   */
-  function updateParentState(checkbox) {
-    const parentItem = checkbox.closest(".field-picker-children-group");
-    if (parentItem) {
-      const parentCheckbox = parentItem.previousElementSibling.querySelector("input[type=checkbox]");
-      const siblings = parentItem.querySelectorAll(".field-picker-item-group");
-      const checkedSiblings = parentItem.querySelectorAll(".field-picker-item-group input[type=checkbox]:checked");
-
-      if (checkedSiblings.length === siblings.length) {
-        parentCheckbox.checked = true;
-        parentCheckbox.classList.remove("is-indeterminate");
-      } else if (checkedSiblings.length > 0) {
-        parentCheckbox.checked = false;
-        parentCheckbox.classList.add("is-indeterminate");
-      } else {
-        parentCheckbox.checked = false;
-        parentCheckbox.classList.remove("is-indeterminate");
-      }
-
-      updateParentState(parentCheckbox);
     }
   }
 
@@ -329,17 +334,6 @@ window.FieldPicker = function (container, options) {
 
     Picker.Fields.RootField = [data[0]];
     Picker.Fields.MainField = data.slice(1);
-    Picker.States = Picker.Fields.MainField.map((field) => {
-      return { code: field.code, children: field.children.map((item) => item.code) };
-    }).reduce((prev, item) => {
-      prev[item.code] = item.children.reduce((prev, item) => {
-        prev[item] = false;
-        return prev;
-      }, {});
-      return prev;
-    }, {});
-
-    console.log("stats", Picker.States);
 
     Picker.TriggerEachClick = triggerEachClick || false;
 

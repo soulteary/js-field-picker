@@ -124,7 +124,9 @@
     <script src="assets/js/field-picker.js"></script>
     <script>
         let instance = FieldPicker("#container", {
-            data: window.FieldOptions.data, updater: function (data) {
+            data: window.FieldOptions.data,
+            skips: "kdd",
+            updater: function (data) {
                 console.log(data)
             }
         });
