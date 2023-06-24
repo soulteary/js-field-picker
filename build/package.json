@@ -1,0 +1,20 @@
+{
+  "name": "js-field-picker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A JavaScript Field Picker written by vanilla JS.",
+  "scripts": {
+    "build": "npx google-closure-compiler --js ../assets/js/field-picker.js --language_out=ECMASCRIPT5 --js_output_file ../assets/js/field-picker.min.js --isolation_mode=IIFE"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soulteary/js-year-picker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/soulteary/js-year-picker/issues"
+  },
+  "homepage": "https://github.com/soulteary/js-year-picker#readme",
+  "devDependencies": {
+    "google-closure-compiler": "^20230502.0.0"
+  }
+}
