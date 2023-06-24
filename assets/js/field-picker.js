@@ -287,7 +287,9 @@ window.FieldPicker = function (container, options) {
         }
       } else {
         const container = event.target.closest(".field-picker-item-group").querySelector(".field-picker-children-group");
+        if (!container) return;
         const btnExpends = container.querySelectorAll(".field-picker-sign");
+        if (!btnExpends) return;
 
         const allExpendStates = Array.from(btnExpends)
           .map((btnExpend) => btnExpend.innerHTML.trim() == "-")
