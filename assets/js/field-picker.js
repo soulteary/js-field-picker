@@ -10,7 +10,6 @@ window.FieldPicker = function (container, options) {
       States: {},
     }, // original data
     Skips: [], // skip data list
-    TriggerEachClick: false,
     // expose functions
     GetSelected: GetSelected,
     Show: ShowPicker,
@@ -21,9 +20,9 @@ window.FieldPicker = function (container, options) {
     return this.Selected;
   }
 
-  function Feedback() {
+  function Feedback(event) {
     if (Picker.Options && Picker.Options.updater && typeof Picker.Options.updater === "function") {
-      Picker.Options.updater(Picker.Selected, Picker);
+      Picker.Options.updater(Picker.Selected, event, Picker);
     }
   }
 
@@ -133,9 +132,7 @@ window.FieldPicker = function (container, options) {
       })
       .filter((value) => value);
 
-    if (Picker.TriggerEachClick) {
-      Feedback();
-    }
+    Feedback("change");
   }
 
   /**
@@ -322,7 +319,7 @@ window.FieldPicker = function (container, options) {
   function HidePicker() {
     const container = document.getElementById(Picker.ComponentId);
     container.className = container.className + " hide";
-    Feedback();
+    Feedback("submit");
   }
 
   function Bootstrap(container, options) {
@@ -330,12 +327,10 @@ window.FieldPicker = function (container, options) {
     Picker.ComponentId = componentId;
 
     Picker.Options = options;
-    const { data, preselected, skips, triggerEachClick } = options;
+    const { data, preselected, skips } = options;
 
     Picker.Fields.RootField = [data[0]];
     Picker.Fields.MainField = data.slice(1);
-
-    Picker.TriggerEachClick = triggerEachClick || false;
 
     const checkboxCheckedbyRemoteAPI = data
       .map((field) => {
@@ -384,7 +379,7 @@ window.FieldPicker = function (container, options) {
 
     updateSelectData();
 
-    Feedback();
+    Feedback("init");
 
     return Picker;
   }
