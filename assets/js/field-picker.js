@@ -7,9 +7,9 @@ window.FieldPicker = function (container, options) {
     Fields: {
       RootField: {},
       MainField: [],
-      States: {},
     }, // original data
     Skips: [], // skip data list
+    Visiable: false,
     // expose functions
     GetSelected: GetSelected,
     Show: ShowPicker,
@@ -101,8 +101,9 @@ window.FieldPicker = function (container, options) {
   }
 
   function InitBaseContainer(container, componentId) {
+    const visiableClass = Picker.Visiable ? "" : "hide";
     const template = `
-      <div id="${componentId}" class="field-picker-container no-select">
+      <div id="${componentId}" class="field-picker-container no-select ${visiableClass}">
         <div class="field-picker-item-group">
           ${getRootField(Picker.Fields.RootField)}
           <div class="field-picker-children-group field-picker-top-groups">
@@ -311,6 +312,7 @@ window.FieldPicker = function (container, options) {
   function ShowPicker() {
     const container = document.getElementById(Picker.ComponentId);
     container.className = container.className.replace(/\s?hide/g, "");
+    Picker.Visiable = true;
   }
 
   /**
@@ -319,6 +321,7 @@ window.FieldPicker = function (container, options) {
   function HidePicker() {
     const container = document.getElementById(Picker.ComponentId);
     container.className = container.className + " hide";
+    Picker.Visiable = false;
     Feedback("submit");
   }
 
@@ -327,8 +330,9 @@ window.FieldPicker = function (container, options) {
     Picker.ComponentId = componentId;
 
     Picker.Options = options;
-    const { data, preselected, skips } = options;
+    const { data, preselected, skips, visiable } = options;
 
+    Picker.Visiable = !!visiable;
     Picker.Fields.RootField = [data[0]];
     Picker.Fields.MainField = data.slice(1);
 
