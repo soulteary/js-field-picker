@@ -23,7 +23,7 @@ window.FieldPicker = function (container, options) {
 
   function Feedback() {
     if (Picker.Options && Picker.Options.updater && typeof Picker.Options.updater === "function") {
-      Picker.Options.updater(Picker.Selected);
+      Picker.Options.updater(Picker.Selected, Picker);
     }
   }
 
