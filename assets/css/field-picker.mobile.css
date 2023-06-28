@@ -97,11 +97,10 @@
 }
 
 .field-picker-container {
-  position: absolute;
+  position: relative;
   width: 100%;
-  z-index: 99;
   background: #fff;
-
+  box-sizing: border-box;
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
 }

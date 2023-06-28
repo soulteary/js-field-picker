@@ -29,44 +29,44 @@ window.FieldPicker = function (container, options) {
   function getRootField(datasets) {
     const [rootInfo] = datasets;
     const { cname, code } = rootInfo;
-    const allChildrenChecked = datasets.every((dataset) => dataset.checked);
+    const allChildrenChecked = datasets.every(dataset => dataset.checked);
     const state = allChildrenChecked ? "checked" : "";
 
     return `
-        <div class="field-picker-row-container">
-          <div class="flex justify-between">
-              <div class="field-picker-title clickable">${cname}</div>
-                <div class="field-picker-checkbox-container">
-                  <label for="field-${code}" class="field-picker-checkbox-label field-picker-checkbox-group">
-                    <input id="field-${code}" type="checkbox" name="field-${code}" value="${code}" ${state}>
-                    <span class="field-checkbox-item clickable"></span>
-                  </label>
-              </div>
+    <div class="field-picker-row-container">
+      <div class="flex justify-between">
+          <div class="field-picker-title clickable">${cname}</div>
+            <div class="field-picker-checkbox-container">
+              <label for="field-${code}" class="field-picker-checkbox-label field-picker-checkbox-group">
+                <input id="field-${code}" type="checkbox" name="field-${code}" value="${code}" ${state}>
+                <span class="field-checkbox-item clickable"></span>
+              </label>
           </div>
-        </div>
-      `;
+      </div>
+    </div>
+    `;
   }
 
   function getSingleField(dataset) {
     const { name, cname, code, checked, link, children } = dataset;
     const state = checked ? "checked" : "";
     let content = `
-          <div class="field-picker-row-container">
-            <div class="flex flex-row justify-between">
-              <div class="field-picker-title">${cname}</div>
-              <div class="field-picker-checkbox-container">
-                <label for="field-${code}" class="field-picker-checkbox-label field-picker-checkbox-group">
-                  <input id="field-${code}" type="checkbox" name="field-${code}" value="${code}" ${state}>
-                  <span class="field-checkbox-item clickable"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-      `;
+    <div class="field-picker-row-container">
+      <div class="flex flex-row justify-between">
+        <div class="field-picker-title">${cname}</div>
+        <div class="field-picker-checkbox-container">
+          <label for="field-${code}" class="field-picker-checkbox-label field-picker-checkbox-group">
+            <input id="field-${code}" type="checkbox" name="field-${code}" value="${code}" ${state}>
+            <span class="field-checkbox-item clickable"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    `;
 
     if (children && children.length) {
-      const allChildrenChecked = children.every((child) => child.checked);
-      const indeterminateState = !allChildrenChecked && children.some((child) => child.checked);
+      const allChildrenChecked = children.every(child => child.checked);
+      const indeterminateState = !allChildrenChecked && children.some(child => child.checked);
 
       content = `
           <div class="field-picker-row-container">
@@ -88,10 +88,10 @@ window.FieldPicker = function (container, options) {
     }
 
     return `
-        <div class="field-picker-item-group">
-          ${content}
-        </div>
-      `;
+      <div class="field-picker-item-group">
+        ${content}
+      </div>
+    `;
   }
 
   function getSingleFieldChildren(dataset) {
@@ -100,10 +100,10 @@ window.FieldPicker = function (container, options) {
     }
 
     return `
-        <div class="field-picker-children-group field-picker-groups">
-          ${dataset.map((item) => getSingleField(item)).join("")}
-        </div>
-      `;
+      <div class="field-picker-children-group field-picker-groups hide">
+        ${dataset.map(item => getSingleField(item)).join("")}
+      </div>
+    `;
   }
 
   function InitBaseContainer(container, componentId) {
@@ -115,7 +115,7 @@ window.FieldPicker = function (container, options) {
             <div class="field-picker-item-group">
               ${getRootField(Picker.Fields.RootField)}
               <div class="field-picker-children-group field-picker-top-groups">
-                ${Picker.Fields.MainField.map((dataset) => getSingleField(dataset)).join("")}
+                ${Picker.Fields.MainField.map(dataset => getSingleField(dataset)).join("")}
               </div>
             </div>
           </div>
@@ -127,18 +127,22 @@ window.FieldPicker = function (container, options) {
             </div>
           </div>
         </div>
+
+        <div id="${Picker.ComponentId}-mask" class="picker-mask ${visiableClass}"></div>
       `;
 
     const containerElement = document.querySelector(container);
     containerElement.innerHTML = template;
 
-    watchMaskButtons();
+    watchMaskEvent();
   }
 
-  function watchMaskButtons() {
+  function watchMaskEvent() {
+    const maskContainer = document.getElementById(`${Picker.ComponentId}-mask`);
     const cancelButton = document.getElementById("field-picker-cancel");
     const sureButton = document.getElementById("field-picker-sure");
 
+    maskContainer.addEventListener("click", CancelPicker);
     cancelButton.addEventListener("click", CancelPicker);
     sureButton.addEventListener("click", HidePicker);
   }
@@ -149,17 +153,17 @@ window.FieldPicker = function (container, options) {
   function updateSelectData() {
     const container = document.getElementById(Picker.ComponentId);
     const checkboxes = Array.from(container.querySelectorAll(".field-picker-checkbox-label input[type=checkbox]"));
-    checkboxes.forEach((checkbox) => {
+    checkboxes.forEach(checkbox => {
       updateParentCheckboxState(checkbox);
     });
 
     Picker.Selected = checkboxes
-      .map((checkbox) => {
+      .map(checkbox => {
         return checkbox.checked ? checkbox.value : null;
       })
-      .filter((value) => value);
+      .filter(value => value);
 
-    Feedback();
+    Feedback("change");
   }
 
   /**
@@ -193,12 +197,12 @@ window.FieldPicker = function (container, options) {
     const parentItem = checkbox.closest(".field-picker-item-group");
 
     // todo reduce
-    Array.from(groups).forEach((group) => {
+    Array.from(groups).forEach(group => {
       if (group == parentItem) {
         const checkboxStateKeeper = group.querySelector(".field-checkbox-item");
         const groupCheckboxes = Array.from(group.querySelectorAll(".field-picker-groups input[type=checkbox]"));
         const checkedSiblings = Array.from(group.querySelectorAll(".field-picker-groups input[type=checkbox]:checked"));
-        const skipItems = groupCheckboxes.filter((item) => {
+        const skipItems = groupCheckboxes.filter(item => {
           return Picker.Skips.includes(item.value);
         }).length;
 
@@ -223,7 +227,9 @@ window.FieldPicker = function (container, options) {
       }
     });
 
-    const mainFieldsChecked = container.querySelectorAll(".field-picker-top-groups > .field-picker-item-group > .field-picker-row-container input[type=checkbox]:checked");
+    const mainFieldsChecked = container.querySelectorAll(
+      ".field-picker-top-groups > .field-picker-item-group > .field-picker-row-container input[type=checkbox]:checked"
+    );
     let all = document.querySelector(".field-picker-item-group #field-all");
     let allCheckboxStateKeeper = all.closest(".field-picker-checkbox-group").querySelector(".field-checkbox-item");
     all.checked = false;
@@ -263,7 +269,7 @@ window.FieldPicker = function (container, options) {
   function toggleChildrenCheckboxes(childrenPicker, isChecked) {
     if (childrenPicker) {
       const childCheckboxes = childrenPicker.querySelectorAll("input[type=checkbox]");
-      childCheckboxes.forEach((childCheckbox) => {
+      childCheckboxes.forEach(childCheckbox => {
         if (Picker.Skips.includes(childCheckbox.value)) return;
         childCheckbox.checked = isChecked;
       });
@@ -318,20 +324,30 @@ window.FieldPicker = function (container, options) {
         if (!btnExpends) return;
 
         const allExpendStates = Array.from(btnExpends)
-          .map((btnExpend) => btnExpend.innerHTML.trim() == "-")
-          .filter((n) => n);
+          .map(btnExpend => btnExpend.innerHTML.trim() == "-")
+          .filter(n => n);
 
         if (allExpendStates.length !== btnExpends.length) {
-          btnExpends.forEach((btnExpend) => {
+          btnExpends.forEach(btnExpend => {
             triggerExpend(btnExpend, "expand");
           });
         } else {
-          btnExpends.forEach((btnExpend) => {
+          btnExpends.forEach(btnExpend => {
             triggerExpend(btnExpend);
           });
         }
       }
     });
+  }
+
+  function showMask() {
+    const maskContainer = document.getElementById(`${Picker.ComponentId}-mask`);
+    maskContainer.className = maskContainer.className.replace(/\s?hide/g, "");
+  }
+
+  function hideMask() {
+    const maskContainer = document.getElementById(`${Picker.ComponentId}-mask`);
+    maskContainer.className = maskContainer.className + " hide";
   }
 
   /**
@@ -340,6 +356,8 @@ window.FieldPicker = function (container, options) {
   function ShowPicker() {
     const container = document.getElementById(Picker.ComponentId);
     container.className = container.className.replace(/\s?hide/g, "");
+    Picker.Visiable = true;
+    showMask();
   }
 
   /**
@@ -348,7 +366,9 @@ window.FieldPicker = function (container, options) {
   function HidePicker() {
     const container = document.getElementById(Picker.ComponentId);
     container.className = container.className + " hide";
-    Feedback();
+    Picker.Visiable = false;
+    Feedback("submit");
+    hideMask();
   }
 
   /**
@@ -358,6 +378,7 @@ window.FieldPicker = function (container, options) {
     const container = document.getElementById(Picker.ComponentId);
     container.className = container.className + " hide";
     Picker.Visiable = false;
+    hideMask();
   }
 
   function Bootstrap(container, options) {
@@ -372,29 +393,29 @@ window.FieldPicker = function (container, options) {
     Picker.Fields.MainField = data.slice(1);
 
     const checkboxCheckedbyRemoteAPI = data
-      .map((field) => {
+      .map(field => {
         if (field.children && field.children.length) {
-          return field.children.filter((item) => item.checked);
+          return field.children.filter(item => item.checked);
         }
         return false;
       })
-      .filter((n) => n)
+      .filter(n => n)
       .reduce((a, b) => a.concat(b), [])
-      .map((item) => item.code);
+      .map(item => item.code);
 
     Picker.Selected = checkboxCheckedbyRemoteAPI;
     if (preselected) {
       if (typeof preselected === "string") {
         // use all fields
         if (preselected === "all") {
-          Picker.Selected = Picker.Fields.MainField.map((field) => field.code).concat(Picker.Fields.RootField.map((field) => field.code));
+          Picker.Selected = Picker.Fields.MainField.map(field => field.code).concat(Picker.Fields.RootField.map(field => field.code));
         } else {
           if (!Picker.Selected.includes(preselected)) {
             Picker.Selected = Picker.Selected.concat(preselected);
           }
         }
       } else if (preselected && preselected.length) {
-        preselected.forEach((selected) => {
+        preselected.forEach(selected => {
           if (!Picker.Selected.includes(selected)) {
             Picker.Selected = Picker.Selected.concat(selected);
           }
