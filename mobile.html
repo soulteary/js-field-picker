@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" class="demo">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Demo</title>
+
+    <link rel="stylesheet" href="assets/css/field-picker.mobile.css">
+
+
+
+    <style>
+        * {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -moz-tap-highlight-color: rgba(0, 0, 0, 0);
+            -ms-tap-highlight-color: rgba(0, 0, 0, 0);
+            -o-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+
+        *,
+        *:before,
+        *:after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            position: relative;
+            margin: 0 auto;
+            font: 12px "Noto Sans SC", "Open Sans";
+            background-color: #ffffff;
+            color: #333333;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -moz-tap-highlight-color: rgba(0, 0, 0, 0);
+            -ms-tap-highlight-color: rgba(0, 0, 0, 0);
+            -o-tap-highlight-color: rgba(0, 0, 0, 0);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-font-smoothing: antialiased;
+            -ms-font-smoothing: antialiased;
+            -o-font-smoothing: antialiased;
+        }
+
+        html,
+        body {
+            -webkit-text-size-adjust: none;
+            -moz-text-size-adjust: none;
+            -ms-text-size-adjust: none;
+            -o-text-size-adjust: none;
+            text-size-adjust: none;
+        }
+
+
+        .demo body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #eee;
+        }
+
+        .demo #container {
+            margin: 0 auto;
+            display: block;
+            position: relative;
+            width: 100%;
+            height: auto;
+        }
+
+        .demo #container .region-picker-container {
+            position: relative;
+            margin: 40px auto;
+        }
+
+
+        .demo #demo-topbar {
+            width: 100%;
+            margin: 0 auto 20px;
+            background: #000;
+        }
+
+        .demo #demo-topbar span {
+            color: #fff;
+            font-size: 24px;
+            display: inline-block;
+            line-height: 100%;
+            vertical-align: middle;
+        }
+
+        .demo #demo-topbar .button-group {
+            margin: 0 auto;
+            width: 400px;
+        }
+
+        .demo #demo-topbar button {
+            width: 120px;
+            margin: 4px;
+            padding: 8px;
+        }
+
+        .demo .debug-output {
+            background: #000;
+            color: #fff;
+            height: 50px;
+            line-height: 2;
+            font-size: 25px;
+            text-align: center;
+        }
+
+        .demo body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .demo #container .region-picker-container {
+            position: relative;
+            margin: 40px auto;
+        }
+
+
+        .demo #demo-topbar {
+            width: 100%;
+            margin: 0 auto 20px;
+            background: #000;
+        }
+
+        .demo #demo-topbar span {
+            color: #fff;
+            font-size: 24px;
+            display: inline-block;
+            line-height: 100%;
+            vertical-align: middle;
+        }
+
+        .demo #demo-topbar .button-group {
+            margin: 0 auto;
+            width: 400px;
+        }
+
+        .demo #demo-topbar button {
+            width: 120px;
+            margin: 4px;
+            padding: 8px;
+        }
+
+        .demo .debug-output {
+            background: #000;
+            color: #fff;
+            height: 50px;
+            line-height: 2;
+            font-size: 25px;
+            text-align: center;
+        }
+
+        .topbar {
+            width: 577px;
+            height: 24px;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 24px;
+            color: #21293C;
+            margin: 0 auto;
+            margin-top: 2px;
+            overflow: hidden;
+            white-space: nowrap;
+            -ms-text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            text-overflow: ellipsis;
+        }
+
+        .topbar span {
+            margin-right: 6px;
+        }
+
+        .picker-box {
+            position: relative;
+            width: 375px;
+            height: 667px;
+            background: #ffffff;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.12);
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="demo-topbar">
+        <div class="button-group">
+            <span>ACTION: </span>
+            <button id="show-modal">Show Modal</button>
+            <button id="hide-modal">Hide Modal</button>
+        </div>
+    </div>
+
+    <div id="container" class="picker-box">
+        <!-- container for region picker -->
+    </div>
+
+    <script src="mock/field-data.js"></script>
+    <script src="assets/js/field-picker.mobile.js"></script>
+    <script>
+        let instance = FieldPicker("#container", {
+            data: window.FieldOptions.data,
+            skips: "kdd",
+            updater: function (data) {
+                console.log(data)
+            }
+        });
+        document.getElementById('show-modal').addEventListener('click', instance.Show);
+        document.getElementById('hide-modal').addEventListener('click', instance.Hide);
+        document.getElementById('show-modal').click(); // switch modal to show instead of hide (default)
+    </script>
+</body>
+
+</html>
