@@ -4,7 +4,9 @@
   "private": true,
   "description": "A JavaScript Field Picker written by vanilla JS.",
   "scripts": {
-    "build": "npx google-closure-compiler --js ../assets/js/field-picker.js --language_out=ECMASCRIPT5 --js_output_file ../assets/js/field-picker.min.js --isolation_mode=IIFE"
+    "build:desktop": "npx google-closure-compiler --js ../assets/js/field-picker.js --language_out=ECMASCRIPT5 --js_output_file ../assets/js/field-picker.min.js --isolation_mode=IIFE",
+    "build:mobile": "npx google-closure-compiler --js ../assets/js/field-picker.mobile.js --language_out=ECMASCRIPT5 --js_output_file ../assets/js/field-picker.mobile.min.js --isolation_mode=IIFE",
+    "build": "npm run build:desktop && npm run build:mobile"
   },
   "repository": {
     "type": "git",

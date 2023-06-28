@@ -23,7 +23,7 @@ func CssMinify(input string) (string, error) {
 	return output.String(), nil
 }
 
-func main() {
+func MinifyDesktop() {
 	buf, err := os.ReadFile("../assets/css/field-picker.css")
 	if err != nil {
 		log.Fatalln(err)
@@ -38,4 +38,26 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func MinifyMobile() {
+	buf, err := os.ReadFile("../assets/css/field-picker.mobile.css")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	output, err := CssMinify(string(buf))
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	err = os.WriteFile("../assets/css/field-picker.mobile.min.css", []byte(output+"\n"), os.ModePerm)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func main() {
+	MinifyDesktop()
+	MinifyMobile()
 }
