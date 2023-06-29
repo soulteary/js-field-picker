@@ -52,7 +52,6 @@
             text-size-adjust: none;
         }
 
-
         .demo body {
             width: 100vw;
             height: 100vh;
@@ -60,23 +59,9 @@
             background-color: #eee;
         }
 
-        .demo #container {
-            margin: 0 auto;
-            display: block;
-            position: relative;
-            width: 100%;
-            height: auto;
-        }
-
-        .demo #container .region-picker-container {
-            position: relative;
-            margin: 40px auto;
-        }
-
-
         .demo #demo-topbar {
             width: 100%;
-            margin: 0 auto 20px;
+            margin: 0 auto;
             background: #000;
         }
 
@@ -100,88 +85,35 @@
         }
 
         .demo .debug-output {
+            position: absolute;
+            z-index: 9999;
+            bottom: 60px;
+            right: 10px;
             background: #000;
             color: #fff;
             height: 50px;
             line-height: 2;
             font-size: 25px;
             text-align: center;
-        }
-
-        .demo body {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .demo #container .region-picker-container {
-            position: relative;
-            margin: 40px auto;
-        }
-
-
-        .demo #demo-topbar {
-            width: 100%;
-            margin: 0 auto 20px;
-            background: #000;
-        }
-
-        .demo #demo-topbar span {
-            color: #fff;
-            font-size: 24px;
-            display: inline-block;
-            line-height: 100%;
-            vertical-align: middle;
-        }
-
-        .demo #demo-topbar .button-group {
-            margin: 0 auto;
-            width: 400px;
-        }
-
-        .demo #demo-topbar button {
-            width: 120px;
-            margin: 4px;
-            padding: 8px;
-        }
-
-        .demo .debug-output {
-            background: #000;
-            color: #fff;
-            height: 50px;
-            line-height: 2;
-            font-size: 25px;
-            text-align: center;
-        }
-
-        .topbar {
-            width: 577px;
-            height: 24px;
-            font-style: normal;
-            font-weight: 400;
-            font-size: 16px;
-            line-height: 24px;
-            color: #21293C;
-            margin: 0 auto;
-            margin-top: 2px;
-            overflow: hidden;
-            white-space: nowrap;
-            -ms-text-overflow: ellipsis;
-            -o-text-overflow: ellipsis;
-            text-overflow: ellipsis;
-        }
-
-        .topbar span {
-            margin-right: 6px;
         }
 
         .picker-box {
             position: relative;
-            width: 375px;
+            max-width: 414px;
             height: 667px;
-            background: #ffffff;
             box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.12);
             margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .picker-mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
         }
     </style>
 </head>
